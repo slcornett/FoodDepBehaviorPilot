@@ -4,6 +4,7 @@ library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(ggsci) # science theme for ggplot2
+library(cowplot)
 #spreadsheet prepared in excel
 f<-"https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/SICB_Poster_Data.csv"
 d <- read_csv(f, col_names = TRUE)
@@ -28,7 +29,10 @@ initiating <- ggplot(data = d, aes(x = FoodCondition,
   geom_boxplot(outlier.shape = NA ) +
   labs(x = "Food Condition", y = "Day14 - Day1 Initiating Behaviors (Count)") +
   ggtitle("Effects of Food Condition on the Occurance of Initiating Mating Behaviors") +
-  theme_classic()
+  theme_classic()+
+  theme(plot.title = element_text(size = 20, color = "dark green", face = "bold"),
+        axis.title.x = element_text(size = 18, color = "dark green"),
+        axis.title.y = element_text(size = 18, color = "dark green"))
 initiating
 #boxplot response behaviors count
 response <- ggplot(data = d, aes(x = FoodCondition,
@@ -39,7 +43,10 @@ response <- ggplot(data = d, aes(x = FoodCondition,
   geom_boxplot(outlier.shape = NA) +
   labs(x = "Food Condition", y = "Day14 - Day1 Response Behaviors (Count)") +
   ggtitle("Effects of Food Condition on the Occurance of Responding Mating Behaviors") +
-  theme_classic()
+  theme_classic() +
+  theme(plot.title = element_text(size = 20, color = "dark green", face = "bold"),
+        axis.title.x = element_text(size = 18, color = "dark green"),
+        axis.title.y = element_text(size = 18, color = "dark green"))
 response
 #boxplot parallel swim time (s)
 Parallel_s <- ggplot(data = d, aes(x = FoodCondition,
@@ -50,6 +57,27 @@ Parallel_s <- ggplot(data = d, aes(x = FoodCondition,
   geom_boxplot(outlier.shape = NA) +
   labs(x = "Food Condition", y = "Day14 - Day1 Parallel Swim (seconds)") +
   ggtitle("Effects of Food Condition on Time(s) Spent Participating in Parallel Swim") +
-  theme_classic()
+  theme_classic() +
+  theme(plot.title = element_text(size = 20, color = "dark green", face = "bold"),
+        axis.title.x = element_text(size = 18, color = "dark green"),
+        axis.title.y = element_text(size = 18, color = "dark green"))
 Parallel_s
+#boxplot chase
+Chases_s <- ggplot(data = d, aes(x = FoodCondition,
+                                   y = Diff_Chases_s,
+                                   fill = MorphSex)) +
+  scale_color_startrek()+
+  #geom_point(position=position_jitterdodge()) +
+  geom_boxplot() + #outlier.shape = NA
+  labs(x = "Food Condition", y = "Day14 - Day1 Parallel Swim (seconds)") +
+  ggtitle("Effects of Food Condition on Time(s) Spent Chasing") +
+  theme_classic()+
+  theme(plot.title = element_text(size = 10, color = "dark green", face = "bold"),
+        axis.title.x = element_text(size = 8, color = "dark green"),
+        axis.title.y = element_text(size = 8, color = "dark green"))
+Chases_s
+
+plot_grid(initiating, response, Parallel_s, ncol = 1)
+
+#initiating+response+Parallel_s
 
