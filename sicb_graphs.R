@@ -5,6 +5,8 @@ library(dplyr)
 library(ggplot2)
 library(ggsci) # science theme for ggplot2
 library(cowplot)
+library(lmodel2)
+library(broom)
 #spreadsheet prepared in excel
 f<-"https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/SICB_Poster_Data.csv"
 d <- read_csv(f, col_names = TRUE)
@@ -16,18 +18,19 @@ d <- d %>% mutate(Diff_Chases = Day14_Chase - Day1_Chase, #count
                   Diff_Initiatings = Day14_InitiatingMatingBehaviors - Day1_InitiatingMatingBehaviors,
                   Diff_Responses = Day14_ResponseMatingBehaviors - Day1_ResponseMatingBehaviors,
                   # both initiating and response parallel swim bc otherwise biased to OMs
-                  Diff_Parallel_s = (`Day14_ParallelSwim-I_s`+`Day14_ParallelSwim-R_s`)-(`Day1_ParallelSwim-I_s`+`Day1_ParallelSwim-R_s`),
+                  Diff_Parallel_s = (`Day14_ParallelSwim-I_s`+`Day14_ParallelSwim-R_s`) -
+                    (`Day1_ParallelSwim-I_s`+`Day1_ParallelSwim-R_s`),
                   Diff_Refuge_s = Day14_Refuge_s - Day1_Refuge_s
                   )
 print(d)
 #boxplot initiating behaviors count
-initiating <- ggplot(data = d, aes(x = FoodCondition,
+initiating <- ggplot(data = d, aes(x = MorphSex,
                                    y = Diff_Initiatings,
-                                  fill = MorphSex)) +
-  scale_color_startrek()+
-  geom_point(position=position_jitterdodge()) +
+                                  fill = FoodCondition)) +
+  scale_color_startrek() +
   geom_boxplot(outlier.shape = NA ) +
-  labs(x = "Food Condition", y = "Day14 - Day1 Initiating Behaviors (Count)") +
+  geom_point(position=position_jitterdodge()) +
+  labs(x = "Morphological Sex", y = "Day14 - Day1 Initiating Behaviors (Count)") +
   ggtitle("Effects of Food Condition on the Occurance of Initiating Mating Behaviors") +
   theme_classic()+
   theme(plot.title = element_text(size = 20, color = "dark green", face = "bold"),
@@ -35,13 +38,13 @@ initiating <- ggplot(data = d, aes(x = FoodCondition,
         axis.title.y = element_text(size = 18, color = "dark green"))
 initiating
 #boxplot response behaviors count
-response <- ggplot(data = d, aes(x = FoodCondition,
+response <- ggplot(data = d, aes(x = MorphSex,
                                  y = Diff_Responses,
-                                 fill = MorphSex)) +
+                                 fill = FoodCondition)) +
   scale_color_startrek()+
-  geom_point(position=position_jitterdodge()) +
   geom_boxplot(outlier.shape = NA) +
-  labs(x = "Food Condition", y = "Day14 - Day1 Response Behaviors (Count)") +
+  geom_point(position=position_jitterdodge()) +
+  labs(x = "Morphological Sex", y = "Day14 - Day1 Response Behaviors (Count)") +
   ggtitle("Effects of Food Condition on the Occurance of Responding Mating Behaviors") +
   theme_classic() +
   theme(plot.title = element_text(size = 20, color = "dark green", face = "bold"),
@@ -49,13 +52,13 @@ response <- ggplot(data = d, aes(x = FoodCondition,
         axis.title.y = element_text(size = 18, color = "dark green"))
 response
 #boxplot parallel swim time (s)
-Parallel_s <- ggplot(data = d, aes(x = FoodCondition,
+Parallel_s <- ggplot(data = d, aes(x = MorphSex,
                                  y = Diff_Parallel_s,
-                                 fill = MorphSex)) +
+                                 fill = FoodCondition)) +
   scale_color_startrek()+
-  geom_point(position=position_jitterdodge()) +
   geom_boxplot(outlier.shape = NA) +
-  labs(x = "Food Condition", y = "Day14 - Day1 Parallel Swim (seconds)") +
+  geom_point(position=position_jitterdodge()) +
+  labs(x = "Morphological Sex", y = "Day14 - Day1 Parallel Swim (seconds)") +
   ggtitle("Effects of Food Condition on Time(s) Spent Participating in Parallel Swim") +
   theme_classic() +
   theme(plot.title = element_text(size = 20, color = "dark green", face = "bold"),
