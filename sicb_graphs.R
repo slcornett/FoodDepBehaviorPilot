@@ -14,6 +14,7 @@ library(skimr)
 ## covariance heatmaps
 library(pvclust)
 library(pheatmap)
+library(RColorBrewer) # for pheatmap colors
 
 # DATA ANAKYSIS TIME
 ## spreadsheet prepared in excel
@@ -295,15 +296,29 @@ Allcov_input <- d %>% select(Day1_Chase, # all Day 1
                             Day14_Retreat,
                             Day14_Glide,
                             Day14_Dart)
-##Hierarchical clustering with bootstrap, using pvclust: https://github.com/shimo-lab/pvclust#####
-pvclust<-pvclust(#{input data set}}, ## WHAT CAN I PUT HERE IF I WANT TO DO TWO TIME POINTS AGAINST EACH OTHER?
+## Hierarchical clustering with bootstrap, using pvclust: https://github.com/shimo-lab/pvclust
+### Day1
+Day1_pvclust<-pvclust(Day1cov_input,
                  method.dist="cor",
                  method.hclust="complete",
                  nboot=1000)
-### Plot the dendrogram result
-plot(pvclust)
-###Box out the significant ## p value calculation
-pvrect(pvclust, alpha=0.95)
+### Day14
+Day14_pvclust<-pvclust(Day14cov_input,
+                      method.dist="cor",
+                      method.hclust="complete",
+                      nboot=1000)
+
+## Plot the dendrogram result
+### Day1
+plot(Day1_pvclust)
+### Day14
+plot(Day14_pvclust)
+
+## Box out the significant ## p value calculation
+### Day1
+pvrect(Day1_pvclust, alpha=0.95)
+### Day14
+pvrect(Day14_pvclust, alpha=0.95)
 
 ########Calculate the covariance matrix heatmap######
 # X = dataset (if y = Null, don't need it explicitly denoted)
@@ -315,7 +330,9 @@ cor.Daycov_input<- cor(x= Day1cov_input,
                        method = c("pearson"))
 #Visualize the covariance matrix using pheatmap (a more advanced package for ploting heatmaps),
 #columns and rows are sorted as the hierarchical clustering results
-pheatmap(cor.Daycov_input)
-#         cluster_cols = pvclust$hclust, # bootstrap values of covariance
-#         cluster_rows = pvclust$hclust)
+pheatmap(cor.Daycov_input,
+         color = colorRampPalette(rev(brewer.pal(n = 10, name = "PRGn")))(100), # n = the saturation/darkness/closeness of the two ends of the color spectrum
+         border_color = "black",
+         cluster_cols = Day1_pvclust$hclust, # bootstrap values of covariance
+         cluster_rows = Day14_pvclust$hclust)
 
