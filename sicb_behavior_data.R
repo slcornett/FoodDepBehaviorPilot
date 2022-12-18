@@ -380,7 +380,7 @@ F.D14cov_input<- d %>% filter(MorphSex == "F") %>%
 
 ## FEMALES Hierarchical clustering with bootstrap, using pvclust: https://github.com/shimo-lab/pvclust
 ### F Day1
-F.D1_pvclust<-pvclust(F.D1cov_input,
+F.D1_pvclust<-pvclust(F.D1cov_input, # WORKS WITHOUT ERROR
                       method.dist="cor",
                       method.hclust="complete",
                       nboot=1000)
@@ -390,7 +390,7 @@ F.D1_pvclust<-pvclust(F.D1cov_input,
 # In addition: Warning message:
 #  In cor(x, method = "pearson", use = use.cor) :
 #  the standard deviation is zero
-F.D14_pvclust<-pvclust(F.D14cov_input,
+F.D14_pvclust<-pvclust(F.D14cov_input, # ERROR
                        method.dist="cor",
                        method.hclust="complete",
                        nboot=1000)
@@ -453,24 +453,24 @@ plot(FSM.D1_pvclust)
 ### F+SM Day14
 plot(FSM.D14_pvclust)
 
-## Box out the significant ## p value calculation
-### Day1
-pvrect(Day1_pvclust, alpha=0.95)
-### Day14
-pvrect(Day14_pvclust, alpha=0.95)
-
-## Calculate the covariance matrix heatmap
-# X = dataset (if y = Null, don't need it explicitly denoted)
-# Y = null because for a covariance of data points, we don't care about individuals.
-# the column headers used automatically
-cor.Daycov_input<- cor(x= Day1cov_input,
-                       y = Day14cov_input,
-                       use = "everything",
-                       method = c("pearson"))
-#Visualize the covariance matrix using pheatmap (a more advanced package for ploting heatmaps),
-#columns and rows are sorted as the hierarchical clustering results
-pheatmap(cor.Daycov_input,
-         color = colorRampPalette(rev(brewer.pal(n = 10, name = "PRGn")))(100), # n = the saturation/darkness/closeness of the two ends of the color spectrum
-         border_color = "black",
-         cluster_cols = Day1_pvclust$hclust, # bootstrap values of covariance
-         cluster_rows = Day14_pvclust$hclust)
+# ## Box out the significant ## p value calculation ---- # gotta fix error first
+# ### Day1
+# pvrect(FSM.D1_pvclust, alpha=0.95)
+# ### Day14
+# pvrect(FSM.D14_pvclust, alpha=0.95)
+#
+# ## Calculate the covariance matrix heatmap
+# # X = dataset (if y = Null, don't need it explicitly denoted)
+# # Y = null because for a covariance of data points, we don't care about individuals.
+# # the column headers used automatically
+# cor.Daycov_input<- cor(x= FSM.D1cov_input,
+#                        y = FSM.D14cov_input,
+#                        use = "everything",
+#                        method = c("pearson"))
+# #Visualize the covariance matrix using pheatmap (a more advanced package for ploting heatmaps),
+# #columns and rows are sorted as the hierarchical clustering results
+# pheatmap(cor.Daycov_input,
+#          color = colorRampPalette(rev(brewer.pal(n = 10, name = "PRGn")))(100), # n = the saturation/darkness/closeness of the two ends of the color spectrum
+#          border_color = "black",
+#          cluster_cols = FSM.D1_pvclust$hclust, # bootstrap values of covariance
+#          cluster_rows = FSM.D14_pvclust$hclust)
