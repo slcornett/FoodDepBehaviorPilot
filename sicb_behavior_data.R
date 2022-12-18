@@ -1,14 +1,11 @@
-#SICB Poster Data
-#Load Packages
+#SICB Poster Data, Behavior
+#Load Packages----
 library(tidyverse)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(ggsci) # science theme for ggplot2
 library(cowplot)
-## linear models
-library(lmodel2)
-library(broom)
 ## skim stats
 library(skimr)
 ## covariance heatmaps
@@ -31,6 +28,7 @@ d <- d %>% mutate(#Diff_Chases = Day14_Chase - Day1_Chase, #count
                   #Diff_Parallel_s = (`Day14_ParallelSwim-I_s`+`Day14_ParallelSwim-R_s`) -
                   #  (`Day1_ParallelSwim-I_s`+`Day1_ParallelSwim-R_s`),
                   #Diff_Refuge_s = Day14_Refuge_s - Day1_Refuge_s,
+  ## Aggression Category of Behavior
                   Day1_Aggression = Day1_Charge + Day1_Chase,
                   Day14_Aggression = Day14_Charge + Day14_Chase
                   )
