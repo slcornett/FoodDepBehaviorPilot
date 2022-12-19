@@ -13,17 +13,10 @@ print(df)
 
 # ∆Ct method graphing results----
 
-# ∆Ct and ∆Ct sd
-df <- df %>% mutate(deltaCt = GnRH2_CtAvg - EarlyB_CtAvg,
-                    deltaCtSD = GnRH2_CtSD - EarlyB_CtSD)
-
-
-
-#by_pop <- df %>% group_by(Population)
-p1 <- ggplot(data = df, aes(x = MorphSex,
-                            y = GnRH2_CtAvg,
+p1 <- ggplot(data = df, aes(x = FoodCondition,
+                            y = deltaCt,
                             fill = FoodCondition)) +
-  geom_violin() +
-  facet_wrap(~Population)
+  geom_boxplot() +
+  facet_wrap(~MorphSex)
 p1
 
