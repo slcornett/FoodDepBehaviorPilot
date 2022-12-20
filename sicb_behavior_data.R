@@ -11,11 +11,13 @@ library(skimr)
 ## covariance heatmaps
 library(pvclust)
 library(pheatmap)
+## correlation matrix
+library(corrplot)
 library(RColorBrewer) # for pheatmap colors
 
 # DATA ANAKYSIS TIME
 ## spreadsheet prepared in excel
-f<-"https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/SICB_Poster_Data.csv"
+f<-"https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/SICB_Behavior_Data.csv"
 d <- read_csv(f, col_names = TRUE)
 print(d)
 ## difference between day 14 and day 1: Day14 - Day 1
@@ -187,15 +189,22 @@ Day1.14_ab
 ## plot behavior categories by population
 ### plot initiations
 pIB <- ggplot(data = Day1.14_ib, aes(x = Day,
-                          y = InitiatingBehaviors_Count,
-                          color = FoodCondition))+
+                                     y = InitiatingBehaviors_Count,
+                                     color = FoodCondition))+
   scale_color_startrek(alpha = 0.75) + # so can see overlapping points
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=4) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
-  labs(x="Food Deprivation Day",
+  scale_y_continuous(breaks=pretty(Day1.14_ib$InitiatingBehaviors_Count, n=10)) +
+  labs(title = "Initiating Behaviors",
+       x ="Food Deprivation Day",
        y="Initiating Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
   facet_wrap(~ Population)
 pIB
 ### plot responses
@@ -205,10 +214,17 @@ pRB <- ggplot(data = Day1.14_rb, aes(x = Day,
   scale_color_startrek(alpha = 0.75) + # so can see overlapping points
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=4) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
-  labs(x="Food Deprivation Day",
+  scale_y_continuous(breaks=pretty(Day1.14_rb$ResponseBehaviors_Count, n=10)) +
+  labs(title = "Responding Behaviors",
+       x="Food Deprivation Day",
        y="Response Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
   facet_wrap(~ Population)
 pRB
 ### plot aggression
@@ -218,10 +234,18 @@ pAB <- ggplot(data = Day1.14_ab, aes(x = Day,
   scale_color_startrek(alpha = 0.75) + # so can see overlapping points
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=4) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
-  labs(x="Food Deprivation Day",
+  scale_y_continuous(breaks=pretty(Day1.14_ab$Aggro_Count, n=5)) +
+  labs(title = "Aggressive Behaviors",
+       x="Food Deprivation Day",
        y="Aggressive Behavior Count (over 30min)") +
+  #increase font size for poster
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
   facet_wrap(~ Population)
 pAB
 
@@ -474,3 +498,7 @@ plot(FSM.D14_pvclust)
 #          border_color = "black",
 #          cluster_cols = FSM.D1_pvclust$hclust, # bootstrap values of covariance
 #          cluster_rows = FSM.D14_pvclust$hclust)
+
+
+# CORRELATION MATRIX PLOT ----
+
