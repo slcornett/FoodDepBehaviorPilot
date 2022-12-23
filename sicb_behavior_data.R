@@ -187,8 +187,8 @@ Day1.14_ab <- Day1.14_ab %>%
 Day1.14_ab
 
 ## plot behavior categories by population
-### plot initiations
-pIB <- ggplot(data = Day1.14_ib, aes(x = Day,
+### plot initiations: all by day
+pIB.sex <- ggplot(data = Day1.14_ib, aes(x = Day,
                                      y = InitiatingBehaviors_Count,
                                      color = FoodCondition))+
   scale_color_startrek(alpha = 0.75) + # so can see overlapping points
@@ -205,8 +205,8 @@ pIB <- ggplot(data = Day1.14_ib, aes(x = Day,
         axis.text.x = element_text(size = 18),
         axis.title.y = element_text(size = 18), # y-axis
         axis.text.y = element_text(size = 18)) +
-  facet_wrap(~ Population)
-pIB
+  facet_wrap(~ MorphSex)
+pIB.sex
 ### plot responses
 pRB <- ggplot(data = Day1.14_rb, aes(x = Day,
                                      y = ResponseBehaviors_Count,
@@ -249,6 +249,9 @@ pAB <- ggplot(data = Day1.14_ab, aes(x = Day,
   facet_wrap(~ Population)
 pAB
 
+# SCATTERPLOTS OF OUT-OF-FRAME----
+## selecting for behavior categories and out-of-frame
+
 # COVARIENCE MATRIX PLOT 1: ALL BEHAVIORS, D1 V D14-------
 ## Selecting for Day1
 Day1cov_input<- d %>% select(Day1_Chase,
@@ -267,7 +270,8 @@ Day1cov_input<- d %>% select(Day1_Chase,
                              Day1_Backup,
                              Day1_Retreat,
                              Day1_Glide,
-                             Day1_Dart)
+                             Day1_Dart,
+                             Day1_Refuge_s)
 ## Selecting for Day14
 Day14cov_input<- d %>% select(Day14_Chase,
                              Day14_Chase_s,
@@ -285,43 +289,8 @@ Day14cov_input<- d %>% select(Day14_Chase,
                              Day14_Backup,
                              Day14_Retreat,
                              Day14_Glide,
-                             Day14_Dart)
-## selecting for all behaviors
-Allcov_input <- d %>% select(Day1_Chase, # all Day 1
-                            Day1_Chase_s,
-                            Day1_Charge,
-                            `Day1_ParallelSwim-I`,
-                            `Day1_ParallelSwim-I_s`,
-                            `Day1_ParallelSwim-R`,
-                            `Day1_ParallelSwim-R_s`,
-                            Day1_TransverseApproach,
-                            Day1_SexDisp_Cwrap,
-                            Day1_SexDisp_FrontShimmy,
-                            Day1_AttemptedCopulation,
-                            Day1_Nip,
-                            Day1_Stay,
-                            Day1_Backup,
-                            Day1_Retreat,
-                            Day1_Glide,
-                            Day1_Dart,
-                            # all day 14
-                            Day14_Chase,
-                            Day14_Chase_s,
-                            Day14_Charge,
-                            `Day14_ParallelSwim-I`,
-                            `Day14_ParallelSwim-I_s`,
-                            `Day14_ParallelSwim-R`,
-                            `Day14_ParallelSwim-R_s`,
-                            Day14_TransverseApproach,
-                            Day14_SexDisp_Cwrap,
-                            Day14_SexDisp_FrontShimmy,
-                            Day14_AttemptedCopulation,
-                            Day14_Nip,
-                            Day14_Stay,
-                            Day14_Backup,
-                            Day14_Retreat,
-                            Day14_Glide,
-                            Day14_Dart)
+                             Day14_Dart,
+                             Day14_Refuge_s)
 ## Hierarchical clustering with bootstrap, using pvclust: https://github.com/shimo-lab/pvclust
 ### Day1
 Day1_pvclust<-pvclust(Day1cov_input,
@@ -356,11 +325,19 @@ cor.Daycov_input<- cor(x= Day1cov_input,
                        method = c("pearson"))
 #Visualize the covariance matrix using pheatmap (a more advanced package for ploting heatmaps),
 #columns and rows are sorted as the hierarchical clustering results
+range1 <- max(abs(cor.Daycov_input))
 pheatmap(cor.Daycov_input,
-         color = colorRampPalette(rev(brewer.pal(n = 10, name = "PRGn")))(100), # n = the saturation/darkness/closeness of the two ends of the color spectrum
+         # customize covarience legend so makes more sense
+         legend = TRUE,
+         breaks = seq(-range1, range1, length.out = 100),
+         # BLUE-YELLOW palette: hcl.colors(100, "BluYl")
+         color = paletteer_c("grDevices::ag_GrnYl", 100),
+         # GREEN-PURPLE palette: # n = the saturation/darkness/closeness of the two ends of the color spectrum
+         #colorRampPalette(rev(brewer.pal(n = 10, name = "PRGn")))(100),
          border_color = "black",
          cluster_cols = Day1_pvclust$hclust, # bootstrap values of covariance
-         cluster_rows = Day14_pvclust$hclust)
+         cluster_rows = Day14_pvclust$hclust,
+         main = "Covariance of X. nigrensis Behaviors on Day 1 vs Day 14")
 
 # COVARIANCE MATRIX PLOT 2: ALL FEMALES-------
 ## Selecting for all Females - DAY 1
@@ -381,7 +358,8 @@ F.D1cov_input<- d %>% filter(MorphSex == "F") %>%
          Day1_Backup,
          Day1_Retreat,
          Day1_Glide,
-         Day1_Dart)
+         Day1_Dart,
+         Day1_Refuge_s)
 ### F -  DAY 14
 F.D14cov_input<- d %>% filter(MorphSex == "F") %>%
   select(Day14_Chase,
@@ -400,7 +378,8 @@ F.D14cov_input<- d %>% filter(MorphSex == "F") %>%
          Day14_Backup,
          Day14_Retreat,
          Day14_Glide,
-         Day14_Dart)
+         Day14_Dart,
+         Day14_Refuge_s)
 
 ## FEMALES Hierarchical clustering with bootstrap, using pvclust: https://github.com/shimo-lab/pvclust
 ### F Day1
@@ -439,7 +418,8 @@ FSM.D1cov_input<- d %>% filter(Population == "F+SM") %>%
          Day1_Backup,
          Day1_Retreat,
          Day1_Glide,
-         Day1_Dart)
+         Day1_Dart,
+         Day1_Refuge_s)
 ### F+OM Pop -  DAY 14
 FSM.D14cov_input<- d %>% filter(Population == "F+SM") %>%
   select(Day14_Chase,
@@ -458,7 +438,8 @@ FSM.D14cov_input<- d %>% filter(Population == "F+SM") %>%
          Day14_Backup,
          Day14_Retreat,
          Day14_Glide,
-         Day14_Dart)
+         Day14_Dart,
+         Day14_Refuge_s)
 ## F+SM Hierarchical clustering with bootstrap, using pvclust: https://github.com/shimo-lab/pvclust
 ### F+SM Day1
 FSM.D1_pvclust<-pvclust(FSM.D1cov_input, # gives the same error
@@ -501,4 +482,58 @@ plot(FSM.D14_pvclust)
 
 
 # CORRELATION MATRIX PLOT ----
+#https://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software#use-chart.correlation-draw-scatter-plots
+## Selecting for Day1
+Day1cor_input<- d %>% select(Day1_Chase,
+                             Day1_Chase_s,
+                             Day1_Charge,
+                             `Day1_ParallelSwim-I`,
+                             `Day1_ParallelSwim-I_s`,
+                             `Day1_ParallelSwim-R`,
+                             `Day1_ParallelSwim-R_s`,
+                             Day1_TransverseApproach,
+                             Day1_SexDisp_Cwrap,
+                             Day1_SexDisp_FrontShimmy,
+                             Day1_AttemptedCopulation,
+                             Day1_Nip,
+                             Day1_Stay,
+                             Day1_Backup,
+                             Day1_Retreat,
+                             Day1_Glide,
+                             Day1_Dart,
+                             Day1_Refuge_s)
+## correlation calc
+Day1cor <- cor(Day1cor_input)
+### round to 3 decimal points
+round(Day1cor, 3)
+## CORRELATION MATRIX:
+### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
+### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
+### Possible values for the argument type are : “upper”, “lower”, “full”
 
+corrplot(Day1cor,
+         type = "upper",
+         order = "hclust",
+         tl.col = "black",
+         tl.srt = 45,
+         col = paletteer_c("grDevices::ag_GrnYl", 100))
+
+## Selecting for Day14
+Day14cor_input<- d %>% select(Day14_Chase,
+                              Day14_Chase_s,
+                              Day14_Charge,
+                              `Day14_ParallelSwim-I`,
+                              `Day14_ParallelSwim-I_s`,
+                              `Day14_ParallelSwim-R`,
+                              `Day14_ParallelSwim-R_s`,
+                              Day14_TransverseApproach,
+                              Day14_SexDisp_Cwrap,
+                              Day14_SexDisp_FrontShimmy,
+                              Day14_AttemptedCopulation,
+                              Day14_Nip,
+                              Day14_Stay,
+                              Day14_Backup,
+                              Day14_Retreat,
+                              Day14_Glide,
+                              Day14_Dart,
+                              Day14_Refuge_s)
