@@ -37,58 +37,7 @@ d <- d %>% mutate(#Diff_Chases = Day14_Chase - Day1_Chase, #count
                   )
 print(d)
 #skim(d) # preliminary scan of data.
-# SCATTERPLOT WITH OUT-OF-FRAME----
-OoF <- d %>% select(Fish,
-                    MorphSex,
-                    Population,
-                    FoodCondition,
-                    Day1_InitiatingMatingBehaviors,
-                    Day1_ResponseMatingBehaviors,
-                    Day1_Aggression,
-                    Day1_OutofFrame_s,
-                    Day14_InitiatingMatingBehaviors,
-                    Day14_ResponseMatingBehaviors,
-                    Day14_Aggression,
-                    Day14_OutofFrame_s) %>%
-  mutate(InitiatingMatingBehaviors = Day1_InitiatingMatingBehaviors + Day14_InitiatingMatingBehaviors,
-         ResponseMatingBehaviors = Day1_ResponseMatingBehaviors + Day14_ResponseMatingBehaviors,
-         Aggression = Day1_Aggression + Day14_Aggression,
-         OutOfFrame = Day1_OutofFrame_s + Day14_OutofFrame_s)
-# OoF v Initiating Behaviors
-OofI <- ggplot(data = OoF, aes(x = OutOfFrame,
-                               y = InitiatingMatingBehaviors,
-                               color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) +
-  geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
-  theme_classic() +
-  labs(title = "Out of Frame (s) vs Initiating Behaviors",
-       x ="Out of Frame (s)",
-       y="Initiating Behaviors Count (over 30min)")
-OofI
 
-# OoF v Responding Behaviors
-OofR <- ggplot(data = OoF, aes(x = OutOfFrame,
-                               y = ResponseMatingBehaviors,
-                               color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) +
-  geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
-  theme_classic() +
-  labs(title = "Out of Frame (s) vs Response Behaviors",
-       x ="Out of Frame (s)",
-       y="Response Behaviors Count (over 30min)")
-OofR
-
-# OoF v Aggressive Behaviors
-OofA <- ggplot(data = OoF, aes(x = OutOfFrame,
-                               y = Aggression,
-                               color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) +
-  geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
-  theme_classic() +
-  labs(title = "Out of Frame (s) vs Aggressive Behaviors",
-       x ="Out of Frame (s)",
-       y="Aggressive Behaviors Count (over 30min)")
-OofA
 # BOXPLOTS OF DIFFERENCE DATA -------
 # Hans recommends tabling this for now.
 ## boxplot initiating behaviors count
@@ -303,6 +252,57 @@ pAB
 
 # SCATTERPLOTS OF OUT-OF-FRAME----
 ## selecting for behavior categories and out-of-frame
+OoF <- d %>% select(Fish,
+                    MorphSex,
+                    Population,
+                    FoodCondition,
+                    Day1_InitiatingMatingBehaviors,
+                    Day1_ResponseMatingBehaviors,
+                    Day1_Aggression,
+                    Day1_OutofFrame_s,
+                    Day14_InitiatingMatingBehaviors,
+                    Day14_ResponseMatingBehaviors,
+                    Day14_Aggression,
+                    Day14_OutofFrame_s) %>%
+  mutate(InitiatingMatingBehaviors = Day1_InitiatingMatingBehaviors + Day14_InitiatingMatingBehaviors,
+         ResponseMatingBehaviors = Day1_ResponseMatingBehaviors + Day14_ResponseMatingBehaviors,
+         Aggression = Day1_Aggression + Day14_Aggression,
+         OutOfFrame = Day1_OutofFrame_s + Day14_OutofFrame_s)
+# OoF v Initiating Behaviors
+OofI <- ggplot(data = OoF, aes(x = OutOfFrame,
+                               y = InitiatingMatingBehaviors,
+                               color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) +
+  geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  labs(title = "Out of Frame (s) vs Initiating Behaviors",
+       x ="Out of Frame (s)",
+       y="Initiating Behaviors Count (over 30min)")
+OofI
+
+# OoF v Responding Behaviors
+OofR <- ggplot(data = OoF, aes(x = OutOfFrame,
+                               y = ResponseMatingBehaviors,
+                               color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) +
+  geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  labs(title = "Out of Frame (s) vs Response Behaviors",
+       x ="Out of Frame (s)",
+       y="Response Behaviors Count (over 30min)")
+OofR
+
+# OoF v Aggressive Behaviors
+OofA <- ggplot(data = OoF, aes(x = OutOfFrame,
+                               y = Aggression,
+                               color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) +
+  geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  labs(title = "Out of Frame (s) vs Aggressive Behaviors",
+       x ="Out of Frame (s)",
+       y="Aggressive Behaviors Count (over 30min)")
+OofA
 
 # COVARIENCE MATRIX PLOT 1: ALL BEHAVIORS, D1 V D14-------
 ## Selecting for Day1
