@@ -7,12 +7,13 @@ library(ggplot2)
 library(ggsci) # science theme for ggplot2
 library(cowplot)
 ## skim stats
-library(skimr)
+#library(skimr)
 ## covariance heatmaps
 library(pvclust)
 library(pheatmap)
 ## correlation matrix
 library(corrplot)
+library(PerformanceAnalytics) # for correlation matrix
 library(RColorBrewer) # for pheatmap colors
 
 # DATA ANAKYSIS TIME
@@ -35,7 +36,47 @@ d <- d %>% mutate(#Diff_Chases = Day14_Chase - Day1_Chase, #count
                   Day14_Aggression = Day14_Charge + Day14_Chase
                   )
 print(d)
-skim(d) # preliminary scan of data.
+#skim(d) # preliminary scan of data.
+# SCATTERPLOT WITH OUT-OF-FRAME----
+OoF <- d %>% select(Fish,
+                    MorphSex,
+                    Population,
+                    FoodCondition,
+                    Day1_InitiatingMatingBehaviors,
+                    Day1_ResponseMatingBehaviors,
+                    Day1_Aggression,
+                    Day1_OutofFrame_s,
+                    Day14_InitiatingMatingBehaviors,
+                    Day14_ResponseMatingBehaviors,
+                    Day14_Aggression,
+                    Day14_OutofFrame_s) %>%
+  mutate(InitiatingMatingBehaviors = Day1_InitiatingMatingBehaviors + Day14_InitiatingMatingBehaviors,
+         ResponseMatingBehaviors = Day1_ResponseMatingBehaviors + Day14_ResponseMatingBehaviors,
+         Aggression = Day1_Aggression + Day14_Aggression,
+         OutOfFrame = Day1_OutofFrame_s + Day14_OutofFrame_s)
+# OoF v Initiating Behaviors
+OofI <- ggplot(data = OoF, aes(x = OutOfFrame,
+                               y = InitiatingMatingBehaviors,
+                               color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) +
+  geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  labs(title = "Out of Frame (s) vs Initiating Behaviors",
+       x ="Out of Frame (s)",
+       y="Initiating Behaviors Count (over 30min)")
+OofI
+
+# OoF v Responding Behaviors
+OofR <- ggplot(data = OoF, aes(x = OutOfFrame,
+                               y = ResponseMatingBehaviors,
+                               color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) +
+  geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  labs(title = "Out of Frame (s) vs Response Behaviors",
+       x ="Out of Frame (s)",
+       y="Response Behaviors Count (over 30min)")
+OofR
 
 # BOXPLOTS OF DIFFERENCE DATA -------
 # Hans recommends tabling this for now.
@@ -329,9 +370,9 @@ range1 <- max(abs(cor.Daycov_input))
 pheatmap(cor.Daycov_input,
          # customize covarience legend so makes more sense
          legend = TRUE,
-         breaks = seq(-range1, range1, length.out = 100),
+         breaks = seq(-range1, range1, length.out = 150),
          # BLUE-YELLOW palette: hcl.colors(100, "BluYl")
-         color = paletteer_c("grDevices::ag_GrnYl", 100),
+         color = paletteer_c("grDevices::ag_GrnYl", 150),
          # GREEN-PURPLE palette: # n = the saturation/darkness/closeness of the two ends of the color spectrum
          #colorRampPalette(rev(brewer.pal(n = 10, name = "PRGn")))(100),
          border_color = "black",
@@ -481,59 +522,191 @@ plot(FSM.D14_pvclust)
 #          cluster_rows = FSM.D14_pvclust$hclust)
 
 
+
+
 # CORRELATION MATRIX PLOT ----
 #https://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software#use-chart.correlation-draw-scatter-plots
-## Selecting for Day1
-Day1cor_input<- d %>% select(Day1_Chase,
-                             Day1_Chase_s,
-                             Day1_Charge,
-                             `Day1_ParallelSwim-I`,
-                             `Day1_ParallelSwim-I_s`,
-                             `Day1_ParallelSwim-R`,
-                             `Day1_ParallelSwim-R_s`,
-                             Day1_TransverseApproach,
-                             Day1_SexDisp_Cwrap,
-                             Day1_SexDisp_FrontShimmy,
-                             Day1_AttemptedCopulation,
-                             Day1_Nip,
-                             Day1_Stay,
-                             Day1_Backup,
-                             Day1_Retreat,
-                             Day1_Glide,
-                             Day1_Dart,
-                             Day1_Refuge_s)
-## correlation calc
-Day1cor <- cor(Day1cor_input)
+## exploratory data
+## matrix correlation graph
+iraBehavs <- d %>%
+  mutate(InitiatingMatingBehaviors = Day1_InitiatingMatingBehaviors + Day14_InitiatingMatingBehaviors,
+         ResponseMatingBehaviors = Day1_ResponseMatingBehaviors + Day14_ResponseMatingBehaviors,
+         AggressionBehaviors = Day1_Aggression + Day14_Aggression)
+iraBehavs <- iraBehavs %>%
+  select(InitiatingMatingBehaviors,
+         ResponseMatingBehaviors,
+         AggressionBehaviors)
+
+chart.Correlation(iraBehavs,
+                  method = c("pearson"),
+                  histogram = TRUE,
+                  pch = 19) # do not know her
+
+## Combining Day 1 and 14 for correlation
+behaviors <- d %>%
+  mutate(Chase = Day1_Chase + Day14_Chase,
+         Chase_s = Day1_Chase_s + Day14_Chase_s,
+         Charges = Day1_Charge + Day14_Charge,
+         ParallelSwim_I = `Day1_ParallelSwim-I` + `Day14_ParallelSwim-I`,
+         ParallelSwim_Is = `Day1_ParallelSwim-I_s` + `Day14_ParallelSwim-I_s`,
+         ParallelSwim_R = `Day1_ParallelSwim-R` + `Day14_ParallelSwim-R`,
+         ParallelSwim_Rs = `Day1_ParallelSwim-R_s` + `Day14_ParallelSwim-R_s`,
+         TransverseApproach = Day1_TransverseApproach + Day14_TransverseApproach,
+         SexDisp_Cwrap = Day1_SexDisp_Cwrap + Day14_SexDisp_Cwrap,
+         SexDisp_FrontShimmy = Day1_SexDisp_FrontShimmy + Day1_SexDisp_FrontShimmy,
+         AttemptedCopulation = Day1_AttemptedCopulation + Day14_AttemptedCopulation,
+         Nip = Day1_Nip + Day1_Nip,
+         Stay = Day1_Stay + Day14_Stay,
+         Backup = Day1_Backup + Day14_Backup,
+         Retreat = Day1_Retreat + Day14_Retreat,
+         Glide = Day1_Glide + Day14_Glide,
+         Dart = Day1_Dart + Day14_Dart,
+         Refuge_s = Day1_Refuge_s + Day14_Refuge_s)
+# selecting relevant columns of data
+behaviors <- behaviors %>%
+  select(Fish, MorphSex, Population, FoodCondition,
+         Chase, Chase_s,
+         Charges,
+         ParallelSwim_I, ParallelSwim_Is,
+         ParallelSwim_R, ParallelSwim_Rs,
+         TransverseApproach,
+         SexDisp_Cwrap,
+         SexDisp_FrontShimmy,
+         AttemptedCopulation,
+         Nip,
+         Stay,
+         Backup,
+         Retreat,
+         Glide,
+         Dart,
+         Refuge_s)
+
+## COR PLOT 1: FOOD CORRELATION ----
+FoodBehav <- behaviors %>%
+  filter(FoodCondition == "Food") %>%
+  select(Chase, Chase_s,
+         Charges,
+         ParallelSwim_I, ParallelSwim_Is,
+         ParallelSwim_R, ParallelSwim_Rs,
+         TransverseApproach,
+         SexDisp_Cwrap,
+         SexDisp_FrontShimmy,
+         AttemptedCopulation,
+         Nip,
+         Stay,
+         Backup,
+         Retreat,
+         Glide,
+         Dart,
+         Refuge_s)
+
+## #correlation calc
+FoodBcor <- cor(FoodBehav)
 ### round to 3 decimal points
-round(Day1cor, 3)
+round(FoodBcor, 3)
 ## CORRELATION MATRIX:
 ### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
 ### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
 ### Possible values for the argument type are : “upper”, “lower”, “full”
-
-corrplot(Day1cor,
+corrplot(FoodBcor,
          type = "upper",
          order = "hclust",
          tl.col = "black",
-         tl.srt = 45,
          col = paletteer_c("grDevices::ag_GrnYl", 100))
 
-## Selecting for Day14
-Day14cor_input<- d %>% select(Day14_Chase,
-                              Day14_Chase_s,
-                              Day14_Charge,
-                              `Day14_ParallelSwim-I`,
-                              `Day14_ParallelSwim-I_s`,
-                              `Day14_ParallelSwim-R`,
-                              `Day14_ParallelSwim-R_s`,
-                              Day14_TransverseApproach,
-                              Day14_SexDisp_Cwrap,
-                              Day14_SexDisp_FrontShimmy,
-                              Day14_AttemptedCopulation,
-                              Day14_Nip,
-                              Day14_Stay,
-                              Day14_Backup,
-                              Day14_Retreat,
-                              Day14_Glide,
-                              Day14_Dart,
-                              Day14_Refuge_s)
+## COR PLOT 2: NO FOOD CORRELATION-----
+NoFoodBehav <- behaviors %>%
+  filter(FoodCondition == "NoFood") %>%
+  select(Chase, Chase_s,
+         Charges,
+         ParallelSwim_I, ParallelSwim_Is,
+         ParallelSwim_R, ParallelSwim_Rs,
+         TransverseApproach,
+         SexDisp_Cwrap,
+         SexDisp_FrontShimmy,
+         AttemptedCopulation,
+         Nip,
+         Stay,
+         Backup,
+         Retreat,
+         Glide,
+         Dart,
+         Refuge_s)
+## #correlation calc
+NoFoodBcor <- cor(NoFoodBehav)
+### round to 3 decimal points
+round(NoFoodBcor, 3)
+## CORRELATION MATRIX:
+### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
+### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
+### Possible values for the argument type are : “upper”, “lower”, “full”
+corrplot(NoFoodBcor,
+         type = "upper",
+         order = "hclust",
+         tl.col = "black",
+         col = paletteer_c("grDevices::ag_GrnYl", 100))
+
+## COR PLOT 3: F+OM CORRELATION ----
+FOMBehav <- behaviors %>%
+  filter(Population == "F+OM") %>%
+  select(Chase, Chase_s,
+         Charges,
+         ParallelSwim_I, ParallelSwim_Is,
+         ParallelSwim_R, ParallelSwim_Rs,
+         TransverseApproach,
+         SexDisp_Cwrap,
+         SexDisp_FrontShimmy,
+         AttemptedCopulation,
+         Nip,
+         Stay,
+         Backup,
+         Retreat,
+         Glide,
+         Dart,
+         Refuge_s)
+## #correlation calc
+FOMBcor <- cor(FOMBehav)
+### round to 3 decimal points
+round(FOMBcor, 3)
+## CORRELATION MATRIX:
+### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
+### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
+### Possible values for the argument type are : “upper”, “lower”, “full”
+corrplot(FOMBcor,
+         type = "upper",
+         order = "hclust",
+         tl.col = "black",
+         #tl.srt = 45,
+         col = paletteer_c("grDevices::ag_GrnYl", 100))
+
+## COR PLOT 4: F+SM CORRELATION---
+FSMBehav <- behaviors %>%
+  filter(Population == "F+SM") %>%
+  select(Chase, Chase_s,
+         Charges,
+         ParallelSwim_I, ParallelSwim_Is,
+         ParallelSwim_R, ParallelSwim_Rs,
+         TransverseApproach,
+         SexDisp_Cwrap,
+         SexDisp_FrontShimmy,
+         AttemptedCopulation,
+         Nip,
+         Stay,
+         Backup,
+         Retreat,
+         Glide,
+         Dart,
+         Refuge_s)
+## #correlation calc
+FSMBcor <- cor(FSMBehav, use = "complete.obs") # standard deviation is 0
+### round to 3 decimal points
+round(FSMBcor, 3)
+## CORRELATION MATRIX:
+### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
+### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
+### Possible values for the argument type are : “upper”, “lower”, “full”
+corrplot(FSMBcor,
+         type = "upper",
+         order = "hclust",
+         tl.col = "black",
+         col = paletteer_c("grDevices::ag_GrnYl", 100))
