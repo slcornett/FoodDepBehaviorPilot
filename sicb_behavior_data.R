@@ -78,6 +78,17 @@ OofR <- ggplot(data = OoF, aes(x = OutOfFrame,
        y="Response Behaviors Count (over 30min)")
 OofR
 
+# OoF v Aggressive Behaviors
+OofA <- ggplot(data = OoF, aes(x = OutOfFrame,
+                               y = Aggression,
+                               color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) +
+  geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  labs(title = "Out of Frame (s) vs Aggressive Behaviors",
+       x ="Out of Frame (s)",
+       y="Aggressive Behaviors Count (over 30min)")
+OofA
 # BOXPLOTS OF DIFFERENCE DATA -------
 # Hans recommends tabling this for now.
 ## boxplot initiating behaviors count
