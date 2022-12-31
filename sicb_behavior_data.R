@@ -195,6 +195,8 @@ Day1.14_ab
 pIB.sex <- ggplot(data = Day1.14_ib, aes(x = Day,
                                      y = InitiatingBehaviors_Count,
                                      color = FoodCondition))+
+  # food : #255668; # No food:
+  # paletteer_c("grDevices::#255668", "grDevices::#255668") +
   scale_color_startrek(alpha = 0.75) + # so can see overlapping points
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
@@ -885,9 +887,9 @@ corrplot(FoodBcor_d1.14,
          type = "upper",
          order = "hclust",
          tl.col = "black",
-         col = paletteer_c("grDevices::ag_GrnYl", 100))
+         col = paletteer_c("grDevices::ag_GrnYl", 50))
 
-## COR PLOT 1.2: FOOD CORRELATION D1----
+## COR PLOT 1.2.1: FOOD CORRELATION D1----
 FoodBehav_d1 <- behaviors_d1 %>%
   filter(FoodCondition == "Food") %>%
   select(Day1_Chase, Day1_Chase_s,
@@ -920,6 +922,39 @@ corrplot(FoodBcor_d1,
          order = "hclust",
          tl.col = "black",
          col = paletteer_c("grDevices::ag_GrnYl", 100))
+
+## COR PLOT 1.2.2: Food and NoFood CORRELATION Day 1----
+Behav_d1 <- behaviors_d1 %>%
+  select(Day1_Chase, Day1_Chase_s,
+         Day1_Charge,
+         `Day1_ParallelSwim-I`, `Day1_ParallelSwim-I_s`,
+         `Day1_ParallelSwim-R`, `Day1_ParallelSwim-R_s`,
+         Day1_TransverseApproach,
+         Day1_SexDisp_Cwrap,
+         Day1_SexDisp_FrontShimmy,
+         Day1_AttemptedCopulation,
+         Day1_Nip,
+         Day1_Stay,
+         Day1_Backup,
+         Day1_Retreat,
+         Day1_Glide,
+         Day1_Dart,
+         Day1_Refuge_s)
+
+### correlation calc
+BehavCor_d1 <- cor(Behav_d1,
+                   method = c("spearman"))
+### round to 3 decimal points
+round(BehavCor_d1, 3)
+## CORRELATION MATRIX:
+### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
+### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
+### Possible values for the argument type are : “upper”, “lower”, “full”
+corrplot(BehavCor_d1,
+         type = "upper",
+         order = "hclust",
+         tl.col = "black",
+         col = paletteer_c("grDevices::Viridis", 100))
 
 ## COR PLOT 1.3: FOOD CORRELATION D14----
 FoodBehav_d14 <- behaviors_d14 %>%
@@ -988,7 +1023,8 @@ corrplot(NoFoodBcor_d1.14,
          type = "upper",
          order = "hclust",
          tl.col = "black",
-         col = paletteer_c("grDevices::ag_GrnYl", 100))
+         col = paletteer_c("grDevices::Plasma", 100))
+           #paletteer_c("grDevices::ag_GrnYl", 100))
 
 ## COR PLOT 2.2: NO FOOD CORRELATION D1-----
 NoFoodBehav_d1 <- behaviors_d1 %>%
@@ -1022,7 +1058,7 @@ corrplot(NoFoodBcor_d1,
          type = "upper",
          order = "hclust",
          tl.col = "black",
-         col = paletteer_c("grDevices::ag_GrnYl", 100))
+         col = paletteer_c("grDevices::Plasma", 100))
 
 ## COR PLOT 2.3: NO FOOD CORRELATION D14-----
 NoFoodBehav_d14 <- behaviors_d14 %>%
@@ -1057,7 +1093,7 @@ corrplot(NoFoodBcor_d14,
          type = "upper",
          order = "hclust",
          tl.col = "black",
-         col = paletteer_c("grDevices::ag_GrnYl", 100))
+         col = paletteer_c("grDevices::Plasma", 100))
 
 
 ## COR PLOT 3: F+OM CORRELATION ----
