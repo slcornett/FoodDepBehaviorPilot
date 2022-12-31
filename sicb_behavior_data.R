@@ -15,7 +15,7 @@ library(pheatmap)
 library(corrplot)
 library(PerformanceAnalytics) # for correlation matrix
 library(RColorBrewer) # for pheatmap colors
-
+library(paletteer) # color palettes
 # DATA ANAKYSIS TIME
 ## spreadsheet prepared in excel
 f<-"https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/SICB_Behavior_Data.csv"
@@ -132,18 +132,18 @@ print(d)
 #plot_grid(initiating, response, Parallel_s, ncol = 1) #group figured in print
 
 # BEHAVIOR CATEGORIES COMPARISON--------
-## selecting data by day1 and day14:
-### select initiating behaviors
+## select initiating behaviors by day1 and day14:
 Day1.14_ib <- d %>% select(Fish,
-                    Population,
-                    FoodCondition,
-                    Day1_InitiatingMatingBehaviors,
-                    #Day1_ResponseMatingBehaviors,
-                    #Day1_Aggression,
-                    Day14_InitiatingMatingBehaviors,
-                    #Day14_ResponseMatingBehaviors,
-                    #Day14_Aggression
-                    )
+                           MorphSex,
+                           Population,
+                           FoodCondition,
+                           Day1_InitiatingMatingBehaviors,
+                           #Day1_ResponseMatingBehaviors,
+                           #Day1_Aggression,
+                           Day14_InitiatingMatingBehaviors,
+                           #Day14_ResponseMatingBehaviors,
+                           #Day14_Aggression
+                           )
 Day1.14_ib
 ## use pivot_longer() to collapse days into single column, with Day ID as a new categorical data column
 ### initiating behaviors
@@ -152,8 +152,10 @@ Day1.14_ib <- Day1.14_ib %>%
                names_to='Day',
                values_to='InitiatingBehaviors_Count')
 Day1.14_ib
+
 ### select response behaviors
 Day1.14_rb <- d %>% select(Fish,
+                           MorphSex,
                            Population,
                            FoodCondition,
                            #Day1_InitiatingMatingBehaviors,
@@ -171,6 +173,7 @@ Day1.14_rb <- Day1.14_rb %>%
 Day1.14_rb
 ### select aggressive behaviors
 Day1.14_ab <- d %>% select(Fish,
+                           MorphSex,
                            Population,
                            FoodCondition,
                            #Day1_InitiatingMatingBehaviors,
@@ -187,8 +190,8 @@ Day1.14_ab <- Day1.14_ab %>%
                values_to='Aggro_Count')
 Day1.14_ab
 
-## plot behavior categories by population
-### plot initiations: all by day
+# plot behavior categories by population
+## BEHAVIOR CATEGORIES COMPARISON: plot initiations----
 pIB.sex <- ggplot(data = Day1.14_ib, aes(x = Day,
                                      y = InitiatingBehaviors_Count,
                                      color = FoodCondition))+
@@ -208,7 +211,77 @@ pIB.sex <- ggplot(data = Day1.14_ib, aes(x = Day,
         axis.text.y = element_text(size = 18)) +
   facet_wrap(~ MorphSex)
 pIB.sex
-### plot responses
+
+## Filter Initiating Behaviors to Single Sex: OM
+Day1.14_ib.om <- Day1.14_ib %>% filter(MorphSex == "OM")
+### PLOT OM IB
+pIB.om <- ggplot(data = Day1.14_ib.om, aes(x = Day,
+                                           y = InitiatingBehaviors_Count,
+                                               color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  scale_y_continuous(breaks=pretty(Day1.14_ib.om$InitiatingBehaviors_Count, n=10)) +
+  labs(title = "Ornamented Males Initiating Behaviors",
+       x ="Food Deprivation Day",
+       y="Initiating Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
+  facet_wrap(~ FoodCondition)
+pIB.om
+## Filter Initiating Behaviors to Single Sex: Females
+Day1.14_ib.f <- Day1.14_ib %>% filter(MorphSex == "F")
+### PLOT F IB
+pIB.f <- ggplot(data = Day1.14_ib.f, aes(x = Day,
+                                         y = InitiatingBehaviors_Count,
+                                         color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.03), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  scale_y_continuous(breaks=pretty(Day1.14_ib.f$InitiatingBehaviors_Count, n=10)) +
+  labs(title = "Females Initiating Behaviors",
+       x ="Food Deprivation Day",
+       y="Initiating Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
+  facet_wrap(~Population)
+  #facet_wrap(~ FoodCondition)
+pIB.f
+
+## Filter Initiating Behaviors to Single Sex: Small Males
+Day1.14_ib.sm <- Day1.14_ib %>% filter(MorphSex == "SM")
+### PLOT F IB
+pIB.sm <- ggplot(data = Day1.14_ib.sm, aes(x = Day,
+                                         y = InitiatingBehaviors_Count,
+                                         color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  scale_y_continuous(breaks=pretty(Day1.14_ib.sm$InitiatingBehaviors_Count, n = 15)) + #, n.breaks=20
+  labs(title = "Small Males Initiating Behaviors",
+       x ="Food Deprivation Day",
+       y="Initiating Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
+  facet_wrap(~ FoodCondition)
+pIB.sm
+
+## BEHAVIOR CATEGORIES COMPARISON: plot responses----
 pRB <- ggplot(data = Day1.14_rb, aes(x = Day,
                                      y = ResponseBehaviors_Count,
                                      color = FoodCondition))+
@@ -228,7 +301,80 @@ pRB <- ggplot(data = Day1.14_rb, aes(x = Day,
         axis.text.y = element_text(size = 18)) +
   facet_wrap(~ Population)
 pRB
-### plot aggression
+
+## Filter Initiating Behaviors to Single Sex: Females
+Day1.14_rb.f <- Day1.14_rb %>% filter(MorphSex == "F")
+### PLOT F RB
+pRB.f <- ggplot(data = Day1.14_rb.f, aes(x = Day,
+                                         y = ResponseBehaviors_Count,
+                                         color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  scale_y_continuous(breaks=pretty(Day1.14_rb.f$ResponseBehaviors_Count, n=10)) +
+  labs(title = "Females Response Behaviors",
+       x ="Food Deprivation Day",
+       y="Response Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
+  facet_wrap(~ Population) +
+  #facet_wrap(~ FoodCondition)
+pRB.f
+
+## Filter Initiating Behaviors to Single Sex: Ornamented Males
+Day1.14_rb.om <- Day1.14_rb %>% filter(MorphSex == "OM")
+### PLOT OM RB
+pRB.om <- ggplot(data = Day1.14_rb.om, aes(x = Day,
+                                         y = ResponseBehaviors_Count,
+                                         color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  scale_y_continuous(breaks=pretty(Day1.14_rb.om$ResponseBehaviors_Count, n=10)) +
+  labs(title = "Ornamented Males Response Behaviors",
+       x ="Food Deprivation Day",
+       y="Response Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
+  #facet_wrap(~ Population) +
+  facet_wrap(~ FoodCondition)
+pRB.om
+
+## Filter Initiating Behaviors to Single Sex: Small Males
+Day1.14_rb.sm <- Day1.14_rb %>% filter(MorphSex == "SM")
+### PLOT OM RB
+pRB.sm <- ggplot(data = Day1.14_rb.sm, aes(x = Day,
+                                           y = ResponseBehaviors_Count,
+                                           color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  scale_y_continuous(breaks=pretty(Day1.14_rb.sm$ResponseBehaviors_Count, n=10)) +
+  labs(title = "Small Males Response Behaviors",
+       x ="Food Deprivation Day",
+       y="Response Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
+  #facet_wrap(~ Population) +
+  facet_wrap(~ FoodCondition)
+pRB.sm
+
+## BEHAVIOR CATEGORIES COMPARISON: plot aggression----
 pAB <- ggplot(data = Day1.14_ab, aes(x = Day,
                                      y = Aggro_Count,
                                      color = FoodCondition))+
@@ -248,7 +394,79 @@ pAB <- ggplot(data = Day1.14_ab, aes(x = Day,
         axis.title.y = element_text(size = 18), # y-axis
         axis.text.y = element_text(size = 18)) +
   facet_wrap(~ Population)
+  #facet_wrap(~MorphSex)
 pAB
+
+## Filter Initiating Behaviors to Single Sex: Females
+Day1.14_ab.f <- Day1.14_ab %>% filter(MorphSex == "F")
+### PLOT F Aggro
+pAB.f <- ggplot(data = Day1.14_ab.f, aes(x = Day,
+                                           y = Aggro_Count,
+                                           color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  scale_y_continuous(breaks=pretty(Day1.14_ab.f$Aggro_Count, n=10)) +
+  labs(title = "Females Aggressive Behaviors",
+       x ="Food Deprivation Day",
+       y="Aggressive Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
+  #facet_wrap(~ Population)
+  facet_wrap(~ FoodCondition)
+pAB.f
+## Filter Initiating Behaviors to Single Sex: OM
+Day1.14_ab.om <- Day1.14_ab %>% filter(MorphSex == "OM")
+### PLOT OM Aggro
+pAB.om <- ggplot(data = Day1.14_ab.om, aes(x = Day,
+                                         y = Aggro_Count,
+                                         color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  scale_y_continuous(breaks=pretty(Day1.14_ab.om$Aggro_Count, n=10)) +
+  labs(title = "Ornamented Males Aggressive Behaviors",
+       x ="Food Deprivation Day",
+       y="Aggressive Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
+#facet_wrap(~ Population)
+facet_wrap(~ FoodCondition)
+pAB.om
+
+## Filter Initiating Behaviors to Single Sex: SM
+Day1.14_ab.sm <- Day1.14_ab %>% filter(MorphSex == "SM")
+### PLOT SM Aggro
+pAB.sm <- ggplot(data = Day1.14_ab.sm, aes(x = Day,
+                                           y = Aggro_Count,
+                                           color = FoodCondition)) +
+  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), size=6) + #position=position_jitter(0.05) # off-sets the data points
+  theme_classic() +
+  scale_y_continuous(breaks=pretty(Day1.14_ab.sm$Aggro_Count, n=5)) +
+  labs(title = "Small Males Aggressive Behaviors",
+       x ="Food Deprivation Day",
+       y="Aggressive Behavior Count (over 30min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 18), # x-axis
+        axis.text.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18), # y-axis
+        axis.text.y = element_text(size = 18)) +
+  #facet_wrap(~ Population)
+  facet_wrap(~ FoodCondition)
+pAB.sm
 
 # SCATTERPLOTS OF OUT-OF-FRAME----
 ## selecting for behavior categories and out-of-frame
@@ -275,9 +493,11 @@ OofI <- ggplot(data = OoF, aes(x = OutOfFrame,
   scale_color_startrek(alpha = 0.75) +
   geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
+  scale_y_continuous(breaks=pretty(OoF$InitiatingMatingBehaviors, n=25)) +
+  scale_x_continuous(breaks=pretty(OoF$OutOfFrame, n=25)) +
   labs(title = "Out of Frame (s) vs Initiating Behaviors",
-       x ="Out of Frame (s)",
-       y="Initiating Behaviors Count (over 30min)")
+       x ="Day 1 + 14 Out of Frame (s)",
+       y="Day 1 + 14 Initiating Behaviors Count (over 30min)")
 OofI
 
 # OoF v Responding Behaviors
@@ -287,9 +507,11 @@ OofR <- ggplot(data = OoF, aes(x = OutOfFrame,
   scale_color_startrek(alpha = 0.75) +
   geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
+  scale_y_continuous(breaks=pretty(OoF$ResponseMatingBehaviors, n=25)) +
+  scale_x_continuous(breaks=pretty(OoF$OutOfFrame, n=25)) +
   labs(title = "Out of Frame (s) vs Response Behaviors",
-       x ="Out of Frame (s)",
-       y="Response Behaviors Count (over 30min)")
+       x ="Day1 + 14 Out of Frame (s)",
+       y = "Day1 + 14 Response Behaviors Count (over 30min)")
 OofR
 
 # OoF v Aggressive Behaviors
@@ -299,9 +521,11 @@ OofA <- ggplot(data = OoF, aes(x = OutOfFrame,
   scale_color_startrek(alpha = 0.75) +
   geom_point(size=6) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
+  scale_y_continuous(breaks=pretty(OoF$Aggression, n=20)) +
+  scale_x_continuous(breaks=pretty(OoF$OutOfFrame, n=25)) +
   labs(title = "Out of Frame (s) vs Aggressive Behaviors",
-       x ="Out of Frame (s)",
-       y="Aggressive Behaviors Count (over 30min)")
+       x ="Day 1 + 14 Out of Frame (s)",
+       y="Day 1 + 14 Aggressive Behaviors Count (over 30min)")
 OofA
 
 # COVARIENCE MATRIX PLOT 1: ALL BEHAVIORS, D1 V D14-------
@@ -374,7 +598,7 @@ pvrect(Day14_pvclust, alpha=0.95)
 cor.Daycov_input<- cor(x= Day1cov_input,
                        y = Day14cov_input,
                        use = "everything",
-                       method = c("pearson"))
+                       method = c("spearman")) # spearman's rank bc pearson's is for normal distribution
 #Visualize the covariance matrix using pheatmap (a more advanced package for ploting heatmaps),
 #columns and rows are sorted as the hierarchical clustering results
 range1 <- max(abs(cor.Daycov_input))
@@ -388,10 +612,9 @@ pheatmap(cor.Daycov_input,
          #colorRampPalette(rev(brewer.pal(n = 10, name = "PRGn")))(100),
          border_color = "black",
          cluster_cols = Day1_pvclust$hclust, # bootstrap values of covariance
-         cluster_rows = Day14_pvclust$hclust,
-         main = "Covariance of X. nigrensis Behaviors on Day 1 vs Day 14")
+         cluster_rows = Day14_pvclust$hclust)
 
-# COVARIANCE MATRIX PLOT 2: ALL FEMALES-------
+# COVARIANCE MATRIX PLOT 2: ALL FEMALES ERRORS-------
 ## Selecting for all Females - DAY 1
 F.D1cov_input<- d %>% filter(MorphSex == "F") %>%
   select(Day1_Chase,
@@ -451,7 +674,7 @@ F.D14_pvclust<-pvclust(F.D14cov_input, # ERROR
                        nboot=1000)
 # STOPPED HERE FOR NOW BECAUSE OF ERROR. CHECK TO SEE IF OCCURS IN POPULATION FILTER
 
-# COVARIANCE MATRIX PLOT 3:F+SM Population -------
+# COVARIANCE MATRIX PLOT 3:F+SM Population ERROR-------
 ## Selecting for F+SM Pop - DAY 1
 FSM.D1cov_input<- d %>% filter(Population == "F+SM") %>%
   select(Day1_Chase,
@@ -549,7 +772,7 @@ iraBehavs <- iraBehavs %>%
          AggressionBehaviors)
 
 chart.Correlation(iraBehavs,
-                  method = c("pearson"),
+                  method = c("spearman"),
                   histogram = TRUE,
                   pch = 19) # do not know her
 
@@ -574,7 +797,8 @@ behaviors <- d %>%
          Dart = Day1_Dart + Day14_Dart,
          Refuge_s = Day1_Refuge_s + Day14_Refuge_s)
 # selecting relevant columns of data
-behaviors <- behaviors %>%
+## Day 1 + Day 14
+behaviors_d1.14 <- behaviors %>%
   select(Fish, MorphSex, Population, FoodCondition,
          Chase, Chase_s,
          Charges,
@@ -591,9 +815,46 @@ behaviors <- behaviors %>%
          Glide,
          Dart,
          Refuge_s)
+## Day 1 only
+behaviors_d1 <- behaviors %>%
+  select(Fish, MorphSex, Population, FoodCondition,
+         Day1_Chase, Day1_Chase_s,
+         Day1_Charge,
+         `Day1_ParallelSwim-I`, `Day1_ParallelSwim-I_s`,
+         `Day1_ParallelSwim-R`, `Day1_ParallelSwim-R_s`,
+         Day1_TransverseApproach,
+         Day1_SexDisp_Cwrap,
+         Day1_SexDisp_FrontShimmy,
+         Day1_AttemptedCopulation,
+         Day1_Nip,
+         Day1_Stay,
+         Day1_Backup,
+         Day1_Retreat,
+         Day1_Glide,
+         Day1_Dart,
+         Day1_Refuge_s)
 
-## COR PLOT 1: FOOD CORRELATION ----
-FoodBehav <- behaviors %>%
+## Day 14 only
+behaviors_d14 <- behaviors %>%
+  select(Fish, MorphSex, Population, FoodCondition,
+         Day14_Chase, Day14_Chase_s,
+         Day14_Charge,
+         `Day14_ParallelSwim-I`, `Day14_ParallelSwim-I_s`,
+         `Day14_ParallelSwim-R`, `Day14_ParallelSwim-R_s`,
+         Day14_TransverseApproach,
+         Day14_SexDisp_Cwrap,
+         Day14_SexDisp_FrontShimmy,
+         Day14_AttemptedCopulation,
+         Day14_Nip,
+         Day14_Stay,
+         Day14_Backup,
+         Day14_Retreat,
+         Day14_Glide,
+         Day14_Dart,
+         Day14_Refuge_s)
+
+## COR PLOT 1.1: FOOD CORRELATION D1 + D14----
+FoodBehav_d1.14 <- behaviors_d1.14 %>%
   filter(FoodCondition == "Food") %>%
   select(Chase, Chase_s,
          Charges,
@@ -611,22 +872,93 @@ FoodBehav <- behaviors %>%
          Dart,
          Refuge_s)
 
-## #correlation calc
-FoodBcor <- cor(FoodBehav)
+### correlation calc
+FoodBcor_d1.14 <- cor(FoodBehav_d1.14,
+                      method = c("spearman"))
 ### round to 3 decimal points
-round(FoodBcor, 3)
+round(FoodBcor_d1.14, 3)
 ## CORRELATION MATRIX:
 ### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
 ### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
 ### Possible values for the argument type are : “upper”, “lower”, “full”
-corrplot(FoodBcor,
+corrplot(FoodBcor_d1.14,
          type = "upper",
          order = "hclust",
          tl.col = "black",
          col = paletteer_c("grDevices::ag_GrnYl", 100))
 
-## COR PLOT 2: NO FOOD CORRELATION-----
-NoFoodBehav <- behaviors %>%
+## COR PLOT 1.2: FOOD CORRELATION D1----
+FoodBehav_d1 <- behaviors_d1 %>%
+  filter(FoodCondition == "Food") %>%
+  select(Day1_Chase, Day1_Chase_s,
+         Day1_Charge,
+         `Day1_ParallelSwim-I`, `Day1_ParallelSwim-I_s`,
+         `Day1_ParallelSwim-R`, `Day1_ParallelSwim-R_s`,
+         Day1_TransverseApproach,
+         Day1_SexDisp_Cwrap,
+         Day1_SexDisp_FrontShimmy,
+         Day1_AttemptedCopulation,
+         Day1_Nip,
+         Day1_Stay,
+         Day1_Backup,
+         Day1_Retreat,
+         Day1_Glide,
+         Day1_Dart,
+         Day1_Refuge_s)
+
+### correlation calc
+FoodBcor_d1 <- cor(FoodBehav_d1,
+                      method = c("spearman"))
+### round to 3 decimal points
+round(FoodBcor_d1, 3)
+## CORRELATION MATRIX:
+### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
+### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
+### Possible values for the argument type are : “upper”, “lower”, “full”
+corrplot(FoodBcor_d1,
+         type = "upper",
+         order = "hclust",
+         tl.col = "black",
+         col = paletteer_c("grDevices::ag_GrnYl", 100))
+
+## COR PLOT 1.3: FOOD CORRELATION D14----
+FoodBehav_d14 <- behaviors_d14 %>%
+  filter(FoodCondition == "Food") %>%
+  select(Day14_Chase, Day14_Chase_s,
+         Day14_Charge,
+         `Day14_ParallelSwim-I`, `Day14_ParallelSwim-I_s`,
+         `Day14_ParallelSwim-R`, `Day14_ParallelSwim-R_s`,
+         Day14_TransverseApproach,
+         Day14_SexDisp_Cwrap,
+         Day14_SexDisp_FrontShimmy,
+         #Day14_AttemptedCopulation, #including it causes SD = 0
+         Day14_Nip,
+         Day14_Stay,
+         Day14_Backup,
+         Day14_Retreat,
+         Day14_Glide,
+         Day14_Dart,
+         Day14_Refuge_s)
+
+### correlation calc
+FoodBcor_d14 <- cor(FoodBehav_d14,
+                   method = c("spearman"),
+                   use = "everything")
+### round to 3 decimal points
+round(FoodBcor_d14, 3)
+## CORRELATION MATRIX:
+### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
+### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
+### Possible values for the argument type are : “upper”, “lower”, “full”
+corrplot(FoodBcor_d14,
+         type = "upper",
+         order = "hclust",
+         tl.col = "black",
+         col = paletteer_c("grDevices::ag_GrnYl", 100))
+
+
+## COR PLOT 2.1: NO FOOD CORRELATION D1 + D14-----
+NoFoodBehav_d1.14 <- behaviors_d1.14 %>%
   filter(FoodCondition == "NoFood") %>%
   select(Chase, Chase_s,
          Charges,
@@ -644,21 +976,92 @@ NoFoodBehav <- behaviors %>%
          Dart,
          Refuge_s)
 ## #correlation calc
-NoFoodBcor <- cor(NoFoodBehav)
+NoFoodBcor_d1.14 <- cor(NoFoodBehav_d1.14,
+                        method = c("spearman"))
 ### round to 3 decimal points
-round(NoFoodBcor, 3)
+round(NoFoodBcor_d1.14, 3)
 ## CORRELATION MATRIX:
 ### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
 ### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
 ### Possible values for the argument type are : “upper”, “lower”, “full”
-corrplot(NoFoodBcor,
+corrplot(NoFoodBcor_d1.14,
          type = "upper",
          order = "hclust",
          tl.col = "black",
          col = paletteer_c("grDevices::ag_GrnYl", 100))
 
+## COR PLOT 2.2: NO FOOD CORRELATION D1-----
+NoFoodBehav_d1 <- behaviors_d1 %>%
+  filter(FoodCondition == "NoFood") %>%
+  select(Day1_Chase, Day1_Chase_s,
+         Day1_Charge,
+         `Day1_ParallelSwim-I`, `Day1_ParallelSwim-I_s`,
+         `Day1_ParallelSwim-R`, `Day1_ParallelSwim-R_s`,
+         Day1_TransverseApproach,
+         Day1_SexDisp_Cwrap,
+         Day1_SexDisp_FrontShimmy,
+         Day1_AttemptedCopulation,
+         Day1_Nip,
+         Day1_Stay,
+         Day1_Backup,
+         Day1_Retreat,
+         Day1_Glide,
+         Day1_Dart,
+         Day1_Refuge_s)
+## #correlation calc
+NoFoodBcor_d1 <- cor(NoFoodBehav_d1,
+                     method = c("spearman"),
+                     use = "everything")
+### round to 3 decimal points
+round(NoFoodBcor_d1, 3)
+## CORRELATION MATRIX:
+### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
+### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
+### Possible values for the argument type are : “upper”, “lower”, “full”
+corrplot(NoFoodBcor_d1,
+         type = "upper",
+         order = "hclust",
+         tl.col = "black",
+         col = paletteer_c("grDevices::ag_GrnYl", 100))
+
+## COR PLOT 2.3: NO FOOD CORRELATION D14-----
+NoFoodBehav_d14 <- behaviors_d14 %>%
+  filter(FoodCondition == "NoFood") %>%
+  select(Day14_Chase, Day14_Chase_s,
+         #Day14_Charge, # not included bc SD = 0
+         `Day14_ParallelSwim-I`, `Day14_ParallelSwim-I_s`,
+         `Day14_ParallelSwim-R`, `Day14_ParallelSwim-R_s`,
+         Day14_TransverseApproach,
+         Day14_SexDisp_Cwrap,
+         Day14_SexDisp_FrontShimmy,
+         Day14_AttemptedCopulation,
+         Day14_Nip,
+         Day14_Stay,
+         Day14_Backup,
+         Day14_Retreat,
+         #Day14_Glide, # not included bc SD = 0
+         Day14_Dart,
+         Day14_Refuge_s)
+
+## #correlation calc
+NoFoodBcor_d14 <- cor(NoFoodBehav_d14,
+                     method = c("spearman"),
+                     use = "everything")
+### round to 3 decimal points
+round(NoFoodBcor_d14, 3)
+## CORRELATION MATRIX:
+### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
+### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
+### Possible values for the argument type are : “upper”, “lower”, “full”
+corrplot(NoFoodBcor_d14,
+         type = "upper",
+         order = "hclust",
+         tl.col = "black",
+         col = paletteer_c("grDevices::ag_GrnYl", 100))
+
+
 ## COR PLOT 3: F+OM CORRELATION ----
-FOMBehav <- behaviors %>%
+FOMBehav_d1.14 <- behaviors_d1.14 %>%
   filter(Population == "F+OM") %>%
   select(Chase, Chase_s,
          Charges,
@@ -676,22 +1079,22 @@ FOMBehav <- behaviors %>%
          Dart,
          Refuge_s)
 ## #correlation calc
-FOMBcor <- cor(FOMBehav)
+FOMBcor_d1.14 <- cor(FOMBehav_d1.14)
 ### round to 3 decimal points
 round(FOMBcor, 3)
 ## CORRELATION MATRIX:
 ### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
 ### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.
 ### Possible values for the argument type are : “upper”, “lower”, “full”
-corrplot(FOMBcor,
+corrplot(FOMBcor_d1.14,
          type = "upper",
          order = "hclust",
          tl.col = "black",
          #tl.srt = 45,
          col = paletteer_c("grDevices::ag_GrnYl", 100))
 
-## COR PLOT 4: F+SM CORRELATION---
-FSMBehav <- behaviors %>%
+## COR PLOT 4: F+SM CORRELATION D1 + D14---
+FSMBehav_d1.14 <- behaviors_d1.14 %>%
   filter(Population == "F+SM") %>%
   select(Chase, Chase_s,
          Charges,
@@ -709,9 +1112,11 @@ FSMBehav <- behaviors %>%
          Dart,
          Refuge_s)
 ## #correlation calc
-FSMBcor <- cor(FSMBehav, use = "complete.obs") # standard deviation is 0
+FSMBcor_d1.14 <- cor(FSMBehav_d1.14,
+                     method = c("spearman"),
+                     use = "complete.obs") # standard deviation is 0
 ### round to 3 decimal points
-round(FSMBcor, 3)
+round(FSMBcor_d1.14, 3)
 ## CORRELATION MATRIX:
 ### The correlation matrix is reordered according to the correlation coefficient using “hclust” method.
 ### tl.col (for text label color) and tl.srt (for text label string rotation) are used to change text colors and rotations.

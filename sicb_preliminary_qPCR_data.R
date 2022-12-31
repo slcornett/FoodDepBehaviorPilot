@@ -6,7 +6,7 @@ library(tidyr)
 library(ggplot2)
 library(ggsci) # science theme for ggplot2
 library(cowplot)
-library(MASS) #anova
+library(car) #anova
 # load dataset
 f1 <- "https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/2022-12-12_GnRH2EarlyB_qPCR.csv"
 df <- read_csv(f1, col_names = TRUE)
@@ -145,3 +145,91 @@ fsm.p3<- ggplot(data = fsm_pop, aes(x = MorphSex,
   #        axis.title.y = element_text(size = 18, color = "dark green"))
   facet_wrap(~Population)
 fsm.p3
+
+# RELATIONSHIPS AND INTERACTIONS OF CATEGORIES WITH GNRH2 ----
+# in ANOVA and lm, the colon (:) operator includes specific interaction terms
+# in ANOVA and lm, asterisk (*) operator includes all interaction terms
+
+## sex anova
+### GnRH2 Ct
+asex.GnRH2 <- aov(data = df, GnRH2_CtAvg ~ MorphSex)
+asex.GnRH2
+summary(asex.GnRH2)
+### ∆Ct
+asex.dCt <- aov(data = df, deltaCt ~ MorphSex)
+asex.dCt
+summary(asex.dCt)
+
+## pop anova
+apop.GnRH2 <- aov(data = df, GnRH2_CtAvg ~ Population)
+apop.GnRH2
+summary(apop.GnRH2)
+### ∆Ct
+apop.dCt <- aov(data = df, deltaCt ~ Population)
+apop.dCt
+summary(apop.dCt)
+
+## food anova
+afood.GnRH2 <- aov(data = df, GnRH2_CtAvg ~ FoodCondition)
+afood.GnRH2
+summary(afood.GnRH2)
+### ∆Ct
+afood.dCt <- aov(data = df, deltaCt ~ FoodCondition)
+afood.dCt
+summary(afood.dCt)
+## interaction anova: food and sex
+a1.GnRH2 <- aov(data = df, GnRH2_CtAvg ~ FoodCondition:MorphSex)
+a1.GnRH2
+summary(a1.GnRH2)
+## interaction anova: food and pop
+a2.GnRH2 <- aov(data = df, GnRH2_CtAvg ~ FoodCondition:Population)
+a2.GnRH2
+summary(a2.GnRH2)
+## ANOVA effect of food condition and effect of morphsex combined
+a3.GnRH2 <- aov(data = df, GnRH2_CtAvg ~ FoodCondition+MorphSex)
+a3.GnRH2
+summary(a3.GnRH2)
+## ANOVA effect of food condition and effect of Population combined
+a4.GnRH2 <- aov(data = df, GnRH2_CtAvg ~ FoodCondition+Population)
+a4.GnRH2
+summary(a4.GnRH2)
+## ANOVA effect of food condition, of Population, and of morphsex combined
+a5.GnRH2 <- aov(data = df, GnRH2_CtAvg ~ Population * MorphSex + FoodCondition)
+a5.GnRH2
+summary(a5.GnRH2)
+
+# Linear Models
+## sex linear model -> SIGNIFICANT @ MORPHSEX SM AND INTERCEPT
+lmsex.GnRH2 <- lm(data = df, GnRH2_CtAvg ~ MorphSex)
+lmsex.GnRH2
+summary(lmsex.GnRH2)
+plot(lmsex.GnRH2)
+## pop linear model -> SIGNIFICANT @ INTERCEPT of F+SM and F+OM
+lmpop.GnRH2 <- lm(data = df, GnRH2_CtAvg ~ Population)
+lmpop.GnRH2
+summary(lmpop.GnRH2)
+plot(lmpop.GnRH2)
+## food linear model -> SIGNIFICANT @ intercept of No
+lmfood.GnRH2 <- lm(data = df, GnRH2_CtAvg ~ FoodCondition)
+lmfood.GnRH2
+summary(lmfood.GnRH2)
+## interaction linear model: food sex
+lm1.GnRH2 <- lm(data = df, GnRH2_CtAvg ~ FoodCondition:MorphSex)
+lm1.GnRH2
+summary(lm1.GnRH2)
+## interaction linear model: food pop
+lm2.GnRH2 <- lm(data = df, GnRH2_CtAvg ~ FoodCondition:Population)
+lm2.GnRH2
+summary(lm2.GnRH2)
+## combined effect of food condition and of morphsex
+lm3.GnRH2 <- lm(data = df, GnRH2_CtAvg ~ FoodCondition+MorphSex)
+lm3.GnRH2
+summary(lm3.GnRH2)
+## combined effect linear model: food pop
+lm4.GnRH2 <- lm(data = df, GnRH2_CtAvg ~ FoodCondition+Population)
+lm4.GnRH2
+summary(lm4.GnRH2)
+## combined effects linear model: food + pop + morphsex
+lm5.GnRH2 <- lm(data = df, GnRH2_CtAvg ~ FoodCondition+Population+MorphSex)
+lm5.GnRH2
+summary(lm5.GnRH2)
