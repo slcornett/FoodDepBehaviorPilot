@@ -4,7 +4,7 @@ library(tidyverse)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(ggsci) # science theme for ggplot2
+#library(ggsci) # science theme for ggplot2
 library(cowplot)
 ## skim stats
 #library(skimr)
@@ -195,12 +195,12 @@ Day1.14_ab
 pIB.sex <- ggplot(data = Day1.14_ib, aes(x = Day,
                                      y = InitiatingBehaviors_Count,
                                      color = FoodCondition))+
-  # food : #255668; # No food:
-  # paletteer_c("grDevices::#255668", "grDevices::#255668") +
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) + #alpha = 0.75,
+  #scale_color_startrek(alpha = 0.75) + # so can see overlapping points
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6, alpha = 0.80) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_ib$InitiatingBehaviors_Count, n=10)) +
   labs(title = "Initiating Behaviors",
@@ -220,15 +220,16 @@ Day1.14_ib.om <- Day1.14_ib %>% filter(MorphSex == "OM")
 pIB.om <- ggplot(data = Day1.14_ib.om, aes(x = Day,
                                            y = InitiatingBehaviors_Count,
                                                color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) + #alpha = 0.75,
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_ib.om$InitiatingBehaviors_Count, n=10)) +
-  labs(title = "Ornamented Males Initiating Behaviors",
+  labs(title = "Ornamented Males Initiation Behaviors",
        x ="Food Deprivation Day",
-       y="Initiating Behavior Count (over 30min)") +
+       y="Initiation Behavior Count (over 20min)") +
   theme(plot.title = element_text(size = 28),
         axis.title.x = element_text(size = 18), # x-axis
         axis.text.x = element_text(size = 18),
@@ -242,22 +243,23 @@ Day1.14_ib.f <- Day1.14_ib %>% filter(MorphSex == "F")
 pIB.f <- ggplot(data = Day1.14_ib.f, aes(x = Day,
                                          y = InitiatingBehaviors_Count,
                                          color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) +
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.03), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size = 6, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_ib.f$InitiatingBehaviors_Count, n=10)) +
-  labs(title = "Females Initiating Behaviors",
+  labs(title = "Females Initiation Behaviors",
        x ="Food Deprivation Day",
-       y="Initiating Behavior Count (over 30min)") +
+       y="Initiation Behavior Count (over 20min)") +
   theme(plot.title = element_text(size = 28),
         axis.title.x = element_text(size = 18), # x-axis
         axis.text.x = element_text(size = 18),
         axis.title.y = element_text(size = 18), # y-axis
         axis.text.y = element_text(size = 18)) +
-  facet_wrap(~Population)
-  #facet_wrap(~ FoodCondition)
+  #facet_wrap(~Population)
+  facet_wrap(~ FoodCondition)
 pIB.f
 
 ## Filter Initiating Behaviors to Single Sex: Small Males
@@ -266,15 +268,16 @@ Day1.14_ib.sm <- Day1.14_ib %>% filter(MorphSex == "SM")
 pIB.sm <- ggplot(data = Day1.14_ib.sm, aes(x = Day,
                                          y = InitiatingBehaviors_Count,
                                          color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) +
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), size=6, alpha = 0.75) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_ib.sm$InitiatingBehaviors_Count, n = 15)) + #, n.breaks=20
   labs(title = "Small Males Initiating Behaviors",
        x ="Food Deprivation Day",
-       y="Initiating Behavior Count (over 30min)") +
+       y="Initiation Behavior Count (over 20min)") +
   theme(plot.title = element_text(size = 28),
         axis.title.x = element_text(size = 18), # x-axis
         axis.text.x = element_text(size = 18),
@@ -287,15 +290,15 @@ pIB.sm
 pRB <- ggplot(data = Day1.14_rb, aes(x = Day,
                                      y = ResponseBehaviors_Count,
                                      color = FoodCondition))+
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
-  # use the group aesthetic to map a different line for each subject.
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) +  # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.02), size=6, alpha = 0.75) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_rb$ResponseBehaviors_Count, n=10)) +
   labs(title = "Responding Behaviors",
        x="Food Deprivation Day",
-       y="Response Behavior Count (over 30min)") +
+       y="Response Behavior Count (over 20min)") +
   theme(plot.title = element_text(size = 28),
         axis.title.x = element_text(size = 18), # x-axis
         axis.text.x = element_text(size = 18),
@@ -310,22 +313,22 @@ Day1.14_rb.f <- Day1.14_rb %>% filter(MorphSex == "F")
 pRB.f <- ggplot(data = Day1.14_rb.f, aes(x = Day,
                                          y = ResponseBehaviors_Count,
                                          color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
-  # use the group aesthetic to map a different line for each subject.
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) +  # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_rb.f$ResponseBehaviors_Count, n=10)) +
   labs(title = "Females Response Behaviors",
        x ="Food Deprivation Day",
-       y="Response Behavior Count (over 30min)") +
+       y="Response Behavior Count (over 20min)") +
   theme(plot.title = element_text(size = 28),
         axis.title.x = element_text(size = 18), # x-axis
         axis.text.x = element_text(size = 18),
         axis.title.y = element_text(size = 18), # y-axis
         axis.text.y = element_text(size = 18)) +
-  facet_wrap(~ Population) +
-  #facet_wrap(~ FoodCondition)
+  #facet_wrap(~ Population) +
+  facet_wrap(~ FoodCondition)
 pRB.f
 
 ## Filter Initiating Behaviors to Single Sex: Ornamented Males
@@ -334,15 +337,15 @@ Day1.14_rb.om <- Day1.14_rb %>% filter(MorphSex == "OM")
 pRB.om <- ggplot(data = Day1.14_rb.om, aes(x = Day,
                                          y = ResponseBehaviors_Count,
                                          color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
-  # use the group aesthetic to map a different line for each subject.
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) +  # use the group aesthetic to map a different line for each subject.  # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_rb.om$ResponseBehaviors_Count, n=10)) +
   labs(title = "Ornamented Males Response Behaviors",
        x ="Food Deprivation Day",
-       y="Response Behavior Count (over 30min)") +
+       y="Response Behavior Count (over 20min)") +
   theme(plot.title = element_text(size = 28),
         axis.title.x = element_text(size = 18), # x-axis
         axis.text.x = element_text(size = 18),
@@ -380,23 +383,24 @@ pRB.sm
 pAB <- ggplot(data = Day1.14_ab, aes(x = Day,
                                      y = Aggro_Count,
                                      color = FoodCondition))+
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) +  # use the group aesthetic to map a different line for each subject.
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.02), size=6, alpha = 0.75) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_ab$Aggro_Count, n=5)) +
   labs(title = "Aggressive Behaviors",
        x="Food Deprivation Day",
-       y="Aggressive Behavior Count (over 30min)") +
+       y="Aggressive Behavior Count (over 20min)") +
   #increase font size for poster
   theme(plot.title = element_text(size = 28),
         axis.title.x = element_text(size = 18), # x-axis
         axis.text.x = element_text(size = 18),
         axis.title.y = element_text(size = 18), # y-axis
         axis.text.y = element_text(size = 18)) +
-  facet_wrap(~ Population)
-  #facet_wrap(~MorphSex)
+  #facet_wrap(~ Population)
+  facet_wrap(~MorphSex)
 pAB
 
 ## Filter Initiating Behaviors to Single Sex: Females
@@ -405,8 +409,8 @@ Day1.14_ab.f <- Day1.14_ab %>% filter(MorphSex == "F")
 pAB.f <- ggplot(data = Day1.14_ab.f, aes(x = Day,
                                            y = Aggro_Count,
                                            color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
-  # use the group aesthetic to map a different line for each subject.
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) +  # use the group aesthetic to map a different line for each subject.  # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
   geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
@@ -428,8 +432,8 @@ Day1.14_ab.om <- Day1.14_ab %>% filter(MorphSex == "OM")
 pAB.om <- ggplot(data = Day1.14_ab.om, aes(x = Day,
                                          y = Aggro_Count,
                                          color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
-  # use the group aesthetic to map a different line for each subject.
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) +  # use the group aesthetic to map a different line for each subject.  # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
   geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
@@ -452,8 +456,8 @@ Day1.14_ab.sm <- Day1.14_ab %>% filter(MorphSex == "SM")
 pAB.sm <- ggplot(data = Day1.14_ab.sm, aes(x = Day,
                                            y = Aggro_Count,
                                            color = FoodCondition)) +
-  scale_color_startrek(alpha = 0.75) + # so can see overlapping points
-  # use the group aesthetic to map a different line for each subject.
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_color_manual(values = c("#08A47F", "#E78140")) +  # use the group aesthetic to map a different line for each subject.  # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
   geom_point(aes(color=FoodCondition), size=6) + #position=position_jitter(0.05) # off-sets the data points
   theme_classic() +
@@ -572,9 +576,9 @@ Day14cov_input<- d %>% select(Day14_Chase,
 ## Hierarchical clustering with bootstrap, using pvclust: https://github.com/shimo-lab/pvclust
 ### Day1
 Day1_pvclust<-pvclust(Day1cov_input,
-                 method.dist="cor",
-                 method.hclust="complete",
-                 nboot=1000)
+                      method.dist="cor",
+                      method.hclust="complete",
+                      nboot=1000)
 ### Day14
 Day14_pvclust<-pvclust(Day14cov_input,
                       method.dist="cor",
@@ -609,7 +613,7 @@ pheatmap(cor.Daycov_input,
          legend = TRUE,
          breaks = seq(-range1, range1, length.out = 150),
          # BLUE-YELLOW palette: hcl.colors(100, "BluYl")
-         color = paletteer_c("grDevices::ag_GrnYl", 150),
+         color = paletteer_c("grDevices::Viridis", 150),
          # GREEN-PURPLE palette: # n = the saturation/darkness/closeness of the two ends of the color spectrum
          #colorRampPalette(rev(brewer.pal(n = 10, name = "PRGn")))(100),
          border_color = "black",
@@ -1129,7 +1133,7 @@ corrplot(FOMBcor_d1.14,
          #tl.srt = 45,
          col = paletteer_c("grDevices::ag_GrnYl", 100))
 
-## COR PLOT 4: F+SM CORRELATION D1 + D14---
+## COR PLOT 4: F+SM CORRELATION D1 + D14----
 FSMBehav_d1.14 <- behaviors_d1.14 %>%
   filter(Population == "F+SM") %>%
   select(Chase, Chase_s,
