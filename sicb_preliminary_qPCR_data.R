@@ -4,8 +4,8 @@ library(tidyverse)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(ggsci) # science theme for ggplot2
-library(cowplot)
+#library(ggsci) # science theme for ggplot2
+#library(cowplot)
 library(car) #anova
 # load dataset
 f1 <- "https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/2022-12-12_GnRH2EarlyB_qPCR.csv"
@@ -27,7 +27,7 @@ sex.om <- df %>% filter(MorphSex == "OM")
 ### ornamented males
 sex.sm <- df %>% filter(MorphSex == "SM")
 
-## deltaCT
+## deltaCT population graphs----
 ### f+om population
 fom.p1 <- ggplot(data = fom_pop, aes(x = MorphSex,
                                y = deltaCt,
@@ -65,6 +65,7 @@ fsm.p1 <- ggplot(data = fsm_pop, aes(x = MorphSex,
   facet_wrap(~Population)
 fsm.p1
 
+## deltaCT morph sex graphs----
 ### females food v no food
 fem.p <- ggplot(data = sex.f, aes(x = FoodCondition,
                                      y = deltaCt,
@@ -77,7 +78,8 @@ fem.p <- ggplot(data = sex.f, aes(x = FoodCondition,
        x = "Food Condition",
        y = "Whole Brain GnRH2 Expression Relative to EarlyB") +
   theme_classic() +
-  scale_y_continuous(breaks=pretty(sex.f$deltaCt, n=15))+
+  scale_y_continuous(limits = c(0,7.0),
+                     n.breaks = 10) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
         axis.title.x = element_text(size = 18, color = "black"), # x-axis
         axis.text.x = element_text(size = 18, color = "black"),
@@ -98,7 +100,8 @@ om.p <- ggplot(data = sex.om, aes(x = FoodCondition,
        x = "Food Condition",
        y = "Whole Brain GnRH2 Expression Relative to EarlyB") +
   theme_classic() +
-  scale_y_continuous(breaks=pretty(sex.om$deltaCt, n=15))+
+  scale_y_continuous(limits = c(0,7.0),
+                     n.breaks = 10) + # breaks=pretty(sex.om$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
         axis.title.x = element_text(size = 18, color = "black"), # x-axis
         axis.text.x = element_text(size = 18, color = "black"),
@@ -119,7 +122,8 @@ sm.p <- ggplot(data = sex.sm, aes(x = FoodCondition,
        x = "Food Condition",
        y = "Whole Brain GnRH2 Expression Relative to EarlyB") +
   theme_classic() +
-  scale_y_continuous(breaks=pretty(sex.sm$deltaCt, n=15))+
+  scale_y_continuous(limits = c(0,7.0),
+                     n.breaks = 10) + # breaks=pretty(sex.sm$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
         axis.title.x = element_text(size = 18, color = "black"), # x-axis
         axis.text.x = element_text(size = 18, color = "black"),
@@ -128,6 +132,7 @@ sm.p <- ggplot(data = sex.sm, aes(x = FoodCondition,
         legend.position="none") #hide legend
 sm.p
 
+# Average GnRH2 Expression----
 ### avg GnRH2 expression
 p2 <- ggplot(data = df, aes(x = MorphSex,
                             y = GnRH2_CtAvg,
@@ -171,7 +176,7 @@ fsm.p2 <- ggplot(data = fsm_pop, aes(x = MorphSex,
   facet_wrap(~Population)
 fsm.p2
 
-## EarlyB Expression
+# Average EarlyB Expression----
 p3 <- ggplot(data = df, aes(x = MorphSex,
                             y = EarlyB_CtAvg,
                             fill = FoodCondition)) +
