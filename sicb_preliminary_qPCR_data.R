@@ -87,6 +87,27 @@ fem.p <- ggplot(data = sex.f, aes(x = FoodCondition,
         axis.text.y = element_text(size = 14, color = "black"),
         legend.position="none") #hide legend)
 fem.p
+### AVG CT GNRH2
+fem.p2 <- ggplot(data = sex.f, aes(x = FoodCondition,
+                                  y = GnRH2_CtAvg,
+                                  fill = FoodCondition)) +
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_fill_manual(values = c("#08A47F", "#E78140")) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position=position_jitterdodge(), size=3) +
+  labs(title = "GnRH2 Expression in Females",
+       x = "Food Condition",
+       y = "Whole Brain GnRH2 Expression (Avg Ct)") +
+  theme_classic() +
+  scale_y_continuous(limits = c(0,26.0),
+                     n.breaks = 15) + # breaks=pretty(sex.f$deltaCt, n=15)
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 18, color = "black"), # x-axis
+        axis.text.x = element_text(size = 18, color = "black"),
+        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+        axis.text.y = element_text(size = 14, color = "black"),
+        legend.position="none") #hide legend)
+fem.p2
 
 ### Ornamented Males food v no food
 om.p <- ggplot(data = sex.om, aes(x = FoodCondition,
@@ -109,6 +130,27 @@ om.p <- ggplot(data = sex.om, aes(x = FoodCondition,
         axis.text.y = element_text(size = 14, color = "black"),
         legend.position="none") #hide legend
 om.p
+### AVG CT GNRH2
+om.p2 <- ggplot(data = sex.om, aes(x = FoodCondition,
+                                  y = GnRH2_CtAvg,
+                                  fill = FoodCondition)) +
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_fill_manual(values = c("#08A47F", "#E78140")) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position=position_jitterdodge(), size=3) +
+  labs(title = "GnRH2 Expression in Ornamented Males",
+       x = "Food Condition",
+       y = "Whole Brain GnRH2 Expression (Avg Ct)") +
+  theme_classic() +
+  scale_y_continuous(limits = c(20.0,26.0),
+                      n.breaks = 14) + # breaks=pretty(sex.om$deltaCt, n=15)
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 18, color = "black"), # x-axis
+        axis.text.x = element_text(size = 18, color = "black"),
+        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+        axis.text.y = element_text(size = 14, color = "black"),
+        legend.position="none") #hide legend
+om.p2
 
 ### Small Males food v no food
 sm.p <- ggplot(data = sex.sm, aes(x = FoodCondition,

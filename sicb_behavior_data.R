@@ -223,18 +223,19 @@ pIB.om <- ggplot(data = Day1.14_ib.om, aes(x = Day,
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
   scale_color_manual(values = c("#08A47F", "#E78140")) + #alpha = 0.75,
   # use the group aesthetic to map a different line for each subject.
-  geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_line(aes(group = Fish), color = "gray", linewidth = 0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=7, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_ib.om$InitiatingBehaviors_Count, n=10)) +
   labs(title = "Ornamented Males Initiation Behaviors",
        x ="Food Deprivation Day",
        y="Initiation Behavior Count (over 20min)") +
-  theme(plot.title = element_text(size = 28),
-        axis.title.x = element_text(size = 18), # x-axis
-        axis.text.x = element_text(size = 18),
-        axis.title.y = element_text(size = 18), # y-axis
-        axis.text.y = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 18, color = "black"), # x-axis
+        axis.text.x = element_text(size = 18, color = "black"),
+        axis.title.y = element_text(size = 5, color = "black"), # y-axis
+        axis.text.y = element_text(size = 18, color = "black"),
+        legend.position="none") + #hide legend +
   facet_wrap(~ FoodCondition)
 pIB.om
 ## Filter Initiating Behaviors to Single Sex: Females
@@ -247,20 +248,26 @@ pIB.f <- ggplot(data = Day1.14_ib.f, aes(x = Day,
   scale_color_manual(values = c("#08A47F", "#E78140")) +
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size = 6, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size = 7, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_ib.f$InitiatingBehaviors_Count, n=10)) +
   labs(title = "Females Initiation Behaviors",
        x ="Food Deprivation Day",
        y="Initiation Behavior Count (over 20min)") +
-  theme(plot.title = element_text(size = 28),
-        axis.title.x = element_text(size = 18), # x-axis
-        axis.text.x = element_text(size = 18),
-        axis.title.y = element_text(size = 18), # y-axis
-        axis.text.y = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 18, color = "black"), # x-axis
+        axis.text.x = element_text(size = 18, color = "black"),
+        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+        axis.text.y = element_text(size = 18, color = "black"),
+        legend.position="none") + #hide legend
   #facet_wrap(~Population)
   facet_wrap(~ FoodCondition)
 pIB.f
+
+## Cowplot
+plot_grid(pIB.f,
+          pIB.om,
+          ncol = 2)
 
 ## Filter Initiating Behaviors to Single Sex: Small Males
 Day1.14_ib.sm <- Day1.14_ib %>% filter(MorphSex == "SM")
@@ -316,17 +323,18 @@ pRB.f <- ggplot(data = Day1.14_rb.f, aes(x = Day,
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
   scale_color_manual(values = c("#08A47F", "#E78140")) +  # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=7, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_rb.f$ResponseBehaviors_Count, n=10)) +
   labs(title = "Females Response Behaviors",
        x ="Food Deprivation Day",
        y="Response Behavior Count (over 20min)") +
-  theme(plot.title = element_text(size = 28),
-        axis.title.x = element_text(size = 18), # x-axis
-        axis.text.x = element_text(size = 18),
-        axis.title.y = element_text(size = 18), # y-axis
-        axis.text.y = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 18, color = "black"), # x-axis
+        axis.text.x = element_text(size = 18, color = "black"),
+        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+        axis.text.y = element_text(size = 18, color = "black"),
+        legend.position="none") + #hide legend
   #facet_wrap(~ Population) +
   facet_wrap(~ FoodCondition)
 pRB.f
@@ -340,20 +348,26 @@ pRB.om <- ggplot(data = Day1.14_rb.om, aes(x = Day,
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
   scale_color_manual(values = c("#08A47F", "#E78140")) +  # use the group aesthetic to map a different line for each subject.  # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color = "gray", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=6, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=7, alpha = 0.8) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(breaks=pretty(Day1.14_rb.om$ResponseBehaviors_Count, n=10)) +
   labs(title = "Ornamented Males Response Behaviors",
        x ="Food Deprivation Day",
        y="Response Behavior Count (over 20min)") +
-  theme(plot.title = element_text(size = 28),
-        axis.title.x = element_text(size = 18), # x-axis
-        axis.text.x = element_text(size = 18),
-        axis.title.y = element_text(size = 18), # y-axis
-        axis.text.y = element_text(size = 18)) +
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 18, color = "black"), # x-axis
+        axis.text.x = element_text(size = 18, color = "black"),
+        axis.title.y = element_text(size = 5, color = "black"), # y-axis
+        axis.text.y = element_text(size = 18, color = "black"),
+        legend.position="none") + #hide legend
   #facet_wrap(~ Population) +
   facet_wrap(~ FoodCondition)
 pRB.om
+
+## Cowplot
+plot_grid(pRB.f,
+          pRB.om,
+          ncol = 2)
 
 ## Filter Initiating Behaviors to Single Sex: Small Males
 Day1.14_rb.sm <- Day1.14_rb %>% filter(MorphSex == "SM")
