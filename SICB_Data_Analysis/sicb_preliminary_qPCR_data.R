@@ -8,7 +8,7 @@ library(ggplot2)
 #library(cowplot)
 library(car) #anova
 # load dataset
-f1 <- "https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/2022-12-12_GnRH2EarlyB_qPCR.csv"
+f1 <- "https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/fdp_datasets/2022-12-12_GnRH2EarlyB_qPCR.csv"
 df <- read_csv(f1, col_names = TRUE)
 print(df)
 
@@ -52,7 +52,7 @@ fsm.p1 <- ggplot(data = fsm_pop, aes(x = MorphSex,
                                      y = deltaCt,
                                      fill = FoodCondition)) +
   scale_color_startrek() +
-  geom_boxplot(outlier.shape = NA ) +
+  geom_boxplot(outlier.shape = NA) +
   geom_point(position=position_jitterdodge()) +
   labs(title = "GnRH2 qPCR Expression in Female + Small Male Populations",
        x = "Morphological Sex",

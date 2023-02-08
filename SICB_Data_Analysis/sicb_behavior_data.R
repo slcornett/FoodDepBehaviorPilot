@@ -1,4 +1,4 @@
-#SICB Poster Data, Behavior
+#SICB Poster Data - Behavior: Boxplots
 #Load Packages----
 library(tidyverse)
 library(dplyr)
@@ -16,9 +16,9 @@ library(corrplot)
 library(PerformanceAnalytics) # for correlation matrix
 library(RColorBrewer) # for pheatmap colors
 library(paletteer) # color palettes
-# DATA ANAKYSIS TIME
+# DATA ANAKYSIS TIME----
 ## spreadsheet prepared in excel
-f<-"https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/SICB_Behavior_Data.csv"
+f<-"https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/fdp_datasets/SICB_Behavior_Data.csv"
 d <- read_csv(f, col_names = TRUE)
 print(d)
 ## difference between day 14 and day 1: Day14 - Day 1
