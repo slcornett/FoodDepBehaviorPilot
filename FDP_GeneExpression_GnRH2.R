@@ -55,7 +55,7 @@ g2fem.p <- ggplot(data = g2.sex.f, aes(x = FoodCondition,
         legend.position="none") #hide legend)
 g2fem.p
 
-## FEMALES AVG CT GNRHR2
+## FEMALES AVG CT GNRH2
 g2fem.p2 <- ggplot(data = g2.sex.f, aes(x = FoodCondition,
                                        y = GnRH2_CtAvg,
                                        fill = FoodCondition)) +
