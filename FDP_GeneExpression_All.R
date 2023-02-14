@@ -9,22 +9,26 @@ library(cowplot)
 library(car) #anova
 
 # load dataset----
-g <-"https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/fdp_datasets/FDP_GeneExpression.csv?token=GHSAT0AAAAAAB6AIFGRF5TCLB6FG7TFR5J4Y7GS57Q"
+g <-"https://raw.githubusercontent.com/slcornett/FoodDepBehaviorPilot/main/fdp_datasets/FDP_GeneExpression.csv"
 ge <- read_csv(g, col_names = TRUE) # ge = gene expression
 print(ge)
 
 # Dataset Calculations ----
 ## combined housekeeping genes Avg Ct
-ge <- ge %>% mutate(Control_AvgCt = (EarlyB_CtAvg+ # gnrh2 control
-                                     GAPDH_CtAvg)/2, # gnrhr2 control
-                    Control_CtSD = (EarlyB_CtSD+ # gnrh2 control
-                                      GAPDH_CtSD)/2 # gnrhr2 control
+ge <- ge %>% mutate(g2.eB.deltaCt = (GnRH2_CtAvg - EarlyB_CtAvg), # same plate control
+                    R2.eb.deltaCt = (GnRHR2_CtAvg - EarlyB_CtAvg), # diff plate control
+                    R2.GAP.deltaCt = (GnRHR2_CtAvg - GAPDH_CtAvg), # same plate control
+                    g2.GAP.deltaCt = (GnRH2_CtAvg - GAPDH_CtAvg) # diff plate control
+                    # Control_AvgCt = (EarlyB_CtAvg + # gnrh2 control
+                    #                  GAPDH_CtAvg)/2, # gnrhr2 control
+                    # Control_CtSD = (EarlyB_CtSD + # gnrh2 control
+                    #                   GAPDH_CtSD)/2 # gnrhr2 control
                     )
 
 # NOT SURE I TRUST THIS METHOD ACTUALLY :(
-## ∆Ct for each gene
-ge <- ge %>% mutate(g2.deltaCt = GnRH2_CtAvg - Control_AvgCt, # gnrh2
-                    R2.deltaCt = GnRHR2_CtAvg - Control_AvgCt) # gnrhr2
+## ∆Ct for each gene -> no cannot do this
+# ge <- ge %>% mutate(g2.deltaCt = GnRH2_CtAvg - Control_AvgCt, # gnrh2
+#                     R2.deltaCt = GnRHR2_CtAvg - Control_AvgCt) # gnrhr2
 print(ge)
 
 ## Filter for each morph sex
@@ -539,3 +543,110 @@ plot_grid(eB.sm.p2,
           GAPDH.sm.p2,
           control.sm.p2,
           ncol = 3)
+
+
+# Expression Trends----
+## GAPDH vs earlyB
+GAP.eB <- ggplot(data = ge, aes(x = GAPDH_CtAvg,
+                                y = EarlyB_CtAvg,
+                                #color = FoodCondition
+                                )) +
+  geom_point(position = "identity", size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Control Genes Expression",
+       x = "GAPDH (Avg Ct)",
+       y = "EarlyB (Avg Ct)") +
+  theme_classic()
+GAP.eB
+## earlyB vs GAPDH
+eB.GAP <- ggplot(data = ge, aes(x = EarlyB_CtAvg,
+                                y = GAPDH_CtAvg,
+                                color = MorphSex
+)) +
+  geom_point(position = "identity", size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Control Genes Expression",
+       x = "EarlyB (Avg Ct)",
+       y = "GAPDH (Avg Ct)") +
+  theme_classic()
+eB.GAP
+
+## GnRH2 vs GnRHR2
+### average ct
+p1.g2.R2 <- ggplot(data = ge, aes(x = GnRH2_CtAvg,
+                                y = GnRHR2_CtAvg,
+                                color = FoodCondition
+                               )) +
+  geom_point(position = "identity", size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "GnRH Genes Expression",
+       x = "GnRH2 (Avg Ct)",
+       y = "GnRHR2 (Avg Ct)") +
+  theme_classic()
+p1.g2.R2
+### delta Ct with respective controls
+p2.g2.R2 <- ggplot(data = ge, aes(x = g2.eB.deltaCt,
+                                  y = R2.GAP.deltaCt,
+                                  #color = FoodCondition
+                                  )) +
+  geom_point(outlier.shape = NA, position = "identity", size = 3, ) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "GnRH Genes Expression",
+       x = "GnRH2 (relative to EarlyB)",
+       y = "GnRHR2 (relative to GAPDH)") +
+  theme_classic() +
+  scale_y_continuous(limits = c(0,8),
+                     n.breaks = 5) +
+  scale_x_continuous(limits = c(0,8),
+                     n.breaks = 5)
+p2.g2.R2
+### delta Ct with GAPDH for both (regardless of separate plates)
+p3.g2.R2 <- ggplot(data = ge, aes(x = g2.GAP.deltaCt,
+                                  y = R2.GAP.deltaCt,
+                                  color = FoodCondition
+)
+) +
+  geom_point(position = "identity", size = 3, ) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "GnRH Genes Expression",
+       x = "GnRH2 (relative to GAPDH*)",
+       y = "GnRHR2 (relative to GAPDH)") +
+  theme_classic() +
+  # scale_y_continuous(limits = c(0,8),
+  #                    n.breaks = 5) +
+  # scale_x_continuous(limits = c(0,8),
+  #                    n.breaks = 5)
+  facet_wrap(~MorphSex)
+p3.g2.R2
+#Hans's Feedback: look at just females by population, and food; 18S primers for sanity check later
+
+### delta Ct with EarlyB for both (regardless of separate plates)
+#### filter outliers
+earlyB.ge <- ge %>% select(Fish,
+                           MorphSex,
+                           FoodCondition,
+                           GnRH2_CtAvg,
+                           GnRHR2_CtAvg,
+                           EarlyB_CtAvg,
+                           EarlyB_CtSD,
+                           g2.eB.deltaCt,
+                           R2.eb.deltaCt) %>%
+  # filtering out two high SD data points to remove the outliers from deltaCt calculations
+  filter(EarlyB_CtSD < 1.0,
+         GAPDH_CtSD)
+
+p4.g2.R2 <- ggplot(data = earlyB.ge, aes(x = g2.eB.deltaCt,
+                                         y = R2.eb.deltaCt,
+                                         #color = FoodCondition
+                                         )) +
+  geom_point(position = "identity", size = 3) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "GnRH Genes Expression",
+       x = "GnRH2 (relative to EarlyB)",
+       y = "GnRHR2 (relative to EarlyB*)") +
+  theme_classic()
+# scale_y_continuous(limits = c(0,8),
+#                    n.breaks = 5) +
+# scale_x_continuous(limits = c(0,8),
+#                    n.breaks = 5)
+p4.g2.R2
