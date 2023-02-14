@@ -618,7 +618,10 @@ p3.g2.R2 <- ggplot(data = ge, aes(x = g2.GAP.deltaCt,
   #                    n.breaks = 5)
   facet_wrap(~MorphSex)
 p3.g2.R2
-#Hans's Feedback: look at just females by population, and food; 18S primers for sanity check later
+#Hans's Feedback:
+## look at GnRH2 in Fems v body size (standard length)
+## look at GAPDH in Fems v body size (sl)
+## look at just females by population, and food; 18S primers for sanity check later
 
 ### delta Ct with EarlyB for both (regardless of separate plates)
 #### filter outliers
