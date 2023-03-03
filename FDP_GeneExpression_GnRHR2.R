@@ -1,4 +1,4 @@
-# FDP Gene Expression Analysis (qPCR) - GnRHR2 + GAPDH
+# FDP Gene Expression Analysis (qPCR) - GnRHRA + GAPDH
 # Load Packages----
 library(tidyverse)
 library(dplyr)

@@ -15,8 +15,8 @@ print(ge)
 
 # Dataset Calculations ----
 ## combining GnRH1 plate GAPDH with GnRHRA plate GAPDH
-ge <- ge %>% mutate(GAPDH_CtAvg = (g1.GAPDH_CtAvg + RA.GAPDH_CtAvg)/2
-                    )
+# ge <- ge %>% mutate(GAPDH_CtAvg = (g1.GAPDH_CtAvg + RA.GAPDH_CtAvg)/2
+#                     )
 ## Checking consistent results bw GnRH1 plate and GNRHRA plate GAPDH samples
 GAPDH.g1.ra <- ggplot(data = ge, aes(x = RA.GAPDH_CtAvg,
                                      y = g1.GAPDH_CtAvg
@@ -66,14 +66,16 @@ FvNF.GnRH1.p <- ggplot(data = ge , aes(x = FoodCondition,
         legend.position = "none") #hide legend)
 FvNF.GnRH1.p
 
-## Gnrh2
-FvNF.GnRH2.p <- ggplot(data = ge , aes(x = FoodCondition,
+## Gnrh2 (GAPDH)
+FvNF.GnRH2.p1 <- ggplot(data = ge , aes(x = FoodCondition,
                                        y = g2.GAP.deltaCt,
                                        fill = FoodCondition)) +
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
   scale_fill_manual(values = c("#08A47F", "#E78140")) +
   geom_boxplot(outlier.shape = NA) +
-  geom_point(position=position_jitterdodge(), size = 3, aes(colour = factor(Population))) +
+  geom_point(position=position_jitterdodge(), size = 3,
+             #aes(colour = factor(Population))
+             ) +
   labs(title = "GnRH2 Expression in Food vs No Food",
        x = "Food Condition",
        y = "Relative Whole Brain GnRH2 Expression (GAPDH)") +
@@ -84,9 +86,33 @@ FvNF.GnRH2.p <- ggplot(data = ge , aes(x = FoodCondition,
         axis.title.x = element_text(size = 18, color = "black"), # x-axis
         axis.text.x = element_text(size = 18, color = "black"),
         axis.title.y = element_text(size = 18, color = "black"), # y-axis
-        axis.text.y = element_text(size = 14, color = "black"))
-        #legend.position = "none") #hide legend
-FvNF.GnRH2.p
+        axis.text.y = element_text(size = 14, color = "black"),
+        legend.position = "none") #hide legend
+FvNF.GnRH2.p1
+
+## Gnrh2 (EarlyB)
+FvNF.GnRH2.p2 <- ggplot(data = ge , aes(x = FoodCondition,
+                                        y = g2.eB.deltaCt,
+                                        fill = FoodCondition)) +
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  scale_fill_manual(values = c("#08A47F", "#E78140")) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position=position_jitterdodge(), size = 3,
+             #aes(colour = factor(Population))
+  ) +
+  labs(title = "GnRH2 Expression in Food vs No Food",
+       x = "Food Condition",
+       y = "Relative Whole Brain GnRH2 Expression (EarlyB)") +
+  theme_classic() +
+  scale_y_continuous(limits = c(-5.0,8.0),
+                     n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 18, color = "black"), # x-axis
+        axis.text.x = element_text(size = 18, color = "black"),
+        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+        axis.text.y = element_text(size = 14, color = "black"),
+        legend.position = "none") #hide legend
+FvNF.GnRH2.p2
 
 ## GnrhrA
 FvNF.GnRHRA.p <- ggplot(data = ge , aes(x = FoodCondition,
@@ -95,7 +121,9 @@ FvNF.GnRHRA.p <- ggplot(data = ge , aes(x = FoodCondition,
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
   scale_fill_manual(values = c("#08A47F", "#E78140")) +
   geom_boxplot(outlier.shape = NA) +
-  geom_point(position=position_jitterdodge(), size = 3, aes(colour = factor(Population))) +
+  geom_point(position=position_jitterdodge(), size = 3,
+             #aes(colour = factor(Population))
+             ) +
   labs(title = "GnRHRA Expression in Food vs No Food",
        x = "Food Condition",
        y = "Relative Whole Brain GnRHRA Expression (GAPDH)") +
@@ -106,8 +134,8 @@ FvNF.GnRHRA.p <- ggplot(data = ge , aes(x = FoodCondition,
         axis.title.x = element_text(size = 18, color = "black"), # x-axis
         axis.text.x = element_text(size = 18, color = "black"),
         axis.title.y = element_text(size = 18, color = "black"), # y-axis
-        axis.text.y = element_text(size = 14, color = "black"))
-#legend.position = "none") #hide legend
+        axis.text.y = element_text(size = 14, color = "black"),
+        legend.position = "none") #hide legend
 FvNF.GnRHRA.p
 
 ## Filter for each morph sex----
@@ -154,7 +182,7 @@ GnRH2.fem.p <- ggplot(data = sex.f, aes(x = FoodCondition,
        x = "Food Condition",
        y = "Relative Whole Brain GnRH2 Expression") +
   theme_classic() +
-  scale_y_continuous(limits = c(-4.0,8.0),
+  scale_y_continuous(limits = c(-3.0,8.0),
                      n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
         axis.title.x = element_text(size = 18, color = "black"), # x-axis
@@ -185,6 +213,12 @@ GnRHRA.fem.p <- ggplot(data = sex.f, aes(x = FoodCondition,
         axis.text.y = element_text(size = 14, color = "black"),
         legend.position="none") #hide legend)
 GnRHRA.fem.p
+
+## Cowplot Females
+plot_grid(GnRH1.fem.p,
+          GnRH2.fem.p,
+          GnRHRA.fem.p,
+          ncol = 3)
 
 # Ornamented  Males deltaCT morph sex graphs----
 ## Ornamented Males food v no food: GnRH1
@@ -243,7 +277,7 @@ GnRHRA.om.p <- ggplot(data = sex.om, aes(x = FoodCondition,
        x = "Food Condition",
        y = "Relative Whole Brain GnRHRA Expression") +
   theme_classic() +
-  scale_y_continuous(limits = c(0,7.0),
+  scale_y_continuous(limits = c(0,8.0),
                      n.breaks = 10) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
         axis.title.x = element_text(size = 18, color = "black"), # x-axis
@@ -252,6 +286,12 @@ GnRHRA.om.p <- ggplot(data = sex.om, aes(x = FoodCondition,
         axis.text.y = element_text(size = 14, color = "black"),
         legend.position="none") #hide legend)
 GnRHRA.om.p
+
+## Cowplot OMales
+plot_grid(GnRH1.om.p,
+          GnRH2.om.p,
+          GnRHRA.om.p,
+          ncol = 3)
 
 # Small Males deltaCT morph sex graphs----
 ## Small Males food v no food: GnRH1
@@ -266,7 +306,7 @@ GnRH1.sm.p <- ggplot(data = sex.sm, aes(x = FoodCondition,
        x = "Food Condition",
        y = "Relative Whole Brain GnRH1 Expression") +
   theme_classic() +
-  scale_y_continuous(limits = c(-4.0,8.0),
+  scale_y_continuous(limits = c(-2.0,8.0),
                      n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
         axis.title.x = element_text(size = 18, color = "black"), # x-axis
@@ -288,7 +328,7 @@ GnRH2.sm.p <- ggplot(data = sex.sm, aes(x = FoodCondition,
        x = "Food Condition",
        y = "Relative Whole Brain GnRH2 Expression") +
   theme_classic() +
-  scale_y_continuous(limits = c(-4.0,8.0),
+  scale_y_continuous(limits = c(-5.0,8.0),
                      n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
         axis.title.x = element_text(size = 18, color = "black"), # x-axis
@@ -310,7 +350,7 @@ GnRHRA.sm.p <- ggplot(data = sex.sm, aes(x = FoodCondition,
        x = "Food Condition",
        y = "Relative Whole Brain GnRHRA Expression") +
   theme_classic() +
-  scale_y_continuous(limits = c(-4.0,8.0),
+  scale_y_continuous(limits = c(0,8.0),
                      n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
         axis.title.x = element_text(size = 18, color = "black"), # x-axis
@@ -320,6 +360,11 @@ GnRHRA.sm.p <- ggplot(data = sex.sm, aes(x = FoodCondition,
         legend.position="none") #hide legend)
 GnRHRA.sm.p
 
+## Cowplot Smales
+plot_grid(GnRH1.sm.p,
+          GnRH2.sm.p,
+          GnRHRA.sm.p,
+          ncol = 3)
 
 # Expression Trends----
 ## GAPDH vs earlyB
@@ -328,11 +373,15 @@ GAP.eB <- ggplot(data = ge, aes(x = GAPDH_CtAvg,
                                 #color = FoodCondition
                                 )) +
   geom_point(position = "identity", size = 3) +
-  geom_smooth(method = "lm", se = FALSE) +
+  geom_smooth(method = "lm", se = TRUE) +
   labs(title = "Control Genes Expression",
        x = "GAPDH (Avg Ct)",
        y = "EarlyB (Avg Ct)") +
-  theme_classic()
+  theme_classic() +
+  scale_x_continuous(limits = c(20,28),
+                     n.breaks = 12) +
+  scale_y_continuous(limits = c(16,28),
+                     n.breaks = 12) # breaks=pretty(sex.f$deltaCt, n=15)
 GAP.eB
 
 ## average ct: not informative
@@ -351,15 +400,15 @@ GAP.eB
 ## deltaCt GnRH1 and GnRH2
 p.g2.g1 <- ggplot(data = ge, aes(x = g2.GAP.deltaCt,
                                  y = g1.GAP.deltaCt,
-                                 color = MorphSex
-                                  )) +
+                                 color = MorphSex #FoodCondition #
+                                 )) +
    geom_point(position = "identity", size = 3) +
    geom_smooth(method = "lm", se = FALSE) +
    labs(title = "GnRH Genes Expression",
-        x = "∆Ct GnRH2",
-        y = "∆Ct GnRH1") +
-   theme_classic() +
-  facet_wrap(~ FoodCondition)
+        x = "Relative GnRH2 (GAPDH)",
+        y = "Relative GnRH1 (GAPDH)") +
+   theme_classic()
+  #facet_wrap(~ FoodCondition)
 p.g2.g1
 
 ## deltaCt GnRH2 and GnRHRA
@@ -370,8 +419,8 @@ p.g2.RA <- ggplot(data = ge, aes(x = g2.GAP.deltaCt,
   geom_point(position = "identity", size = 3) +
   geom_smooth(method = "lm", se = FALSE) +
   labs(title = "GnRH Genes Expression",
-       x = "∆Ct GnRH2",
-       y = "∆Ct GnRHRA") +
+       x = "Relative GnRH2 (GAPDH)",
+       y = "Relative GnRHRA (GAPDH)") +
   theme_classic() +
   facet_wrap(~ FoodCondition)
 p.g2.RA
@@ -404,7 +453,7 @@ p.g1.SL <- ggplot(data = ge, aes(x = SL_mm,
   facet_wrap(~ FoodCondition)
 p.g1.SL
 #Note: gestational state: looking at oocyte #/fry (count and weigh, get dev state) and repro organs
-## ∆Ct v GnRH2
+## SL v ∆Ct GnRH2
 p.g2.SL <- ggplot(data = ge, aes(x = SL_mm,
                                  y = g2.GAP.deltaCt,
                                  color = MorphSex
@@ -418,7 +467,7 @@ p.g2.SL <- ggplot(data = ge, aes(x = SL_mm,
   facet_wrap(~ FoodCondition)
 p.g2.SL
 
-## ∆Ct v GnRHRA
+## SL v ∆Ct GnRHRA
 p.RA.SL <- ggplot(data = ge, aes(x = SL_mm,
                                  y = RA.GAP.deltaCt,
                                  color = MorphSex
@@ -454,7 +503,7 @@ p3.g2.RA <- ggplot(data = ge, aes(x = g2.GAP.deltaCt,
                                   color = FoodCondition
 )) +
   geom_point(position = "identity", size = 3, ) +
-  geom_smooth(method = "lm", se = TRUE) +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(title = "GnRH Genes Expression",
        x = "GnRH2 (relative to GAPDH*)",
        y = "GnRHRA (relative to GAPDH)") +
