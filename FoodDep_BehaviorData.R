@@ -1,4 +1,4 @@
-# Project: Food Deprivation Project
+# Project: Food Deprivation Pilot Project
 # Behavior Data
 library(tidyverse)
 library(dplyr)

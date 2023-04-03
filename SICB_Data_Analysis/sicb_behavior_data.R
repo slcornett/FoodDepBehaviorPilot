@@ -32,8 +32,8 @@ d <- d %>% mutate(#Diff_Chases = Day14_Chase - Day1_Chase, #count
                   #  (`Day1_ParallelSwim-I_s`+`Day1_ParallelSwim-R_s`),
                   #Diff_Refuge_s = Day14_Refuge_s - Day1_Refuge_s,
   ## Aggression Category of Behavior
-                  Day1_Aggression = Day1_Charge + Day1_Chase,
-                  Day14_Aggression = Day14_Charge + Day14_Chase
+                  Day1_Aggression = Day1_Charge,
+                  Day14_Aggression = Day14_Charge
                   )
 print(d)
 #skim(d) # preliminary scan of data.
@@ -782,11 +782,20 @@ plot(FSM.D14_pvclust)
 #https://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software#use-chart.correlation-draw-scatter-plots
 ## exploratory data
 ## matrix correlation graph
+### all behaviors
 iraBehavs <- d %>%
   mutate(InitiatingMatingBehaviors = Day1_InitiatingMatingBehaviors + Day14_InitiatingMatingBehaviors,
          ResponseMatingBehaviors = Day1_ResponseMatingBehaviors + Day14_ResponseMatingBehaviors,
          AggressionBehaviors = Day1_Aggression + Day14_Aggression)
-iraBehavs <- iraBehavs %>%
+
+iraBehavs_d1 <- d %>%
+  select(Day1_InitiatingMatingBehaviors,
+         Day1_ResponseMatingBehaviors,
+         Day1_Aggression)
+
+#food correlation
+iraBehavs.F <- iraBehavs  %>%
+  filter(FoodCondition == "Food") %>%
   select(InitiatingMatingBehaviors,
          ResponseMatingBehaviors,
          AggressionBehaviors)
