@@ -6,6 +6,7 @@ library(tidyr)
 library(ggplot2)
 #library(ggsci) # science theme for ggplot2
 library(cowplot)
+library(patchwork) # combining plots
 library(car) #anova
 
 # load dataset----
@@ -15,8 +16,8 @@ print(ge)
 
 # Dataset Calculations ----
 ## combining GnRH1 plate GAPDH with GnRHRA plate GAPDH
-# ge <- ge %>% mutate(GAPDH_CtAvg = (g1.GAPDH_CtAvg + RA.GAPDH_CtAvg)/2
-#                     )
+ge <- ge %>% mutate(GAPDH_CtAvg = (g1.GAPDH_CtAvg + RA.GAPDH_CtAvg)/2
+                     )
 ## Checking consistent results bw GnRH1 plate and GNRHRA plate GAPDH samples
 GAPDH.g1.ra <- ggplot(data = ge, aes(x = RA.GAPDH_CtAvg,
                                      y = g1.GAPDH_CtAvg
@@ -33,9 +34,9 @@ GAPDH.g1.ra
 ## housekeeping genes Avg Ct
 ge <- ge %>% mutate(g2.eB.deltaCt = (GnRH2_CtAvg - EarlyB_CtAvg), # same plate control
                     RA.eB.deltaCt = (GnRHRA_CtAvg - EarlyB_CtAvg), # diff plate control
-                    RA.GAP.deltaCt = (GnRHRA_CtAvg - GAPDH_CtAvg), # same plate control
+                    RA.GAP.deltaCt = (GnRHRA_CtAvg - RA.GAPDH_CtAvg), # same plate control
                     g2.GAP.deltaCt = (GnRH2_CtAvg - GAPDH_CtAvg), # diff plate control
-                    g1.GAP.deltaCt = (GnRH1_CtAvg - GAPDH_CtAvg)
+                    g1.GAP.deltaCt = (GnRH1_CtAvg - g1.GAPDH_CtAvg)
                     )
 
 # NOT SURE I TRUST THIS METHOD ACTUALLY :(
@@ -45,40 +46,18 @@ ge <- ge %>% mutate(g2.eB.deltaCt = (GnRH2_CtAvg - EarlyB_CtAvg), # same plate c
 print(ge)
 # Food v NoFood Comparisons----
 ## Gnrh1
-FvNF.GnRH1.p <- ggplot(data = ge , aes(x = FoodCondition,
+FvNF.GnRH1.p <- ggplot(data = ge , aes(x = MorphSex,
                                       y = g1.GAP.deltaCt,
-                                      fill = FoodCondition)) +
+                                      fill = MorphSex)) +
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
-  scale_fill_manual(values = c("#08A47F", "#E78140")) +
+  # scale_fill_manual(values = c("#08A47F", "#E78140")) + #fill = food condition
+  scale_fill_manual(values = c("#392682", "#3F86BC", "#83DDE0")) +
   geom_boxplot(outlier.shape = NA) +
   geom_point(position=position_jitterdodge(), size = 3) +
-  labs(title = "GnRH1 Expression in Food vs No Food",
-       x = "Food Condition",
-       y = "Relative Whole Brain GnRH1 Expression") +
-  theme_classic() +
-  scale_y_continuous(limits = c(-2.0,8.0),
-                     n.breaks = 10) + # breaks=pretty(sex.f$deltaCt, n=15)
-  theme(plot.title = element_text(size = 28, color = "black"),
-        axis.title.x = element_text(size = 18, color = "black"), # x-axis
-        axis.text.x = element_text(size = 18, color = "black"),
-        axis.title.y = element_text(size = 18, color = "black"), # y-axis
-        axis.text.y = element_text(size = 14, color = "black"),
-        legend.position = "none") #hide legend)
-FvNF.GnRH1.p
-
-## Gnrh2 (GAPDH)
-FvNF.GnRH2.p1 <- ggplot(data = ge , aes(x = FoodCondition,
-                                       y = g2.GAP.deltaCt,
-                                       fill = FoodCondition)) +
-  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
-  scale_fill_manual(values = c("#08A47F", "#E78140")) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_point(position=position_jitterdodge(), size = 3,
-             #aes(colour = factor(Population))
-             ) +
-  labs(title = "GnRH2 Expression in Food vs No Food",
-       x = "Food Condition",
-       y = "Relative Whole Brain GnRH2 Expression (GAPDH)") +
+  geom_abline(aes(intercept = 0, slope = 0)) +
+  labs(title = "GnRH1",
+       x = "Morphological Sex",
+       y = "Relative Whole Brain Expression (GAPDH)") +
   theme_classic() +
   scale_y_continuous(limits = c(-5.0,8.0),
                      n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
@@ -87,7 +66,37 @@ FvNF.GnRH2.p1 <- ggplot(data = ge , aes(x = FoodCondition,
         axis.text.x = element_text(size = 18, color = "black"),
         axis.title.y = element_text(size = 18, color = "black"), # y-axis
         axis.text.y = element_text(size = 14, color = "black"),
-        legend.position = "none") #hide legend
+        legend.position = "none") + #hide legend)
+#facet_wrap(~MorphSex) # fill = food condition
+  facet_wrap(~FoodCondition) # fill = MorphSex
+FvNF.GnRH1.p
+
+## Gnrh2 (GAPDH)
+FvNF.GnRH2.p1 <- ggplot(data = ge , aes(x = MorphSex,
+                                       y = g2.GAP.deltaCt,
+                                       fill = MorphSex)) +
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  # scale_fill_manual(values = c("#08A47F", "#E78140")) + #fill = food condition
+  scale_fill_manual(values = c("#392682", "#3F86BC", "#83DDE0")) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position=position_jitterdodge(), size = 3,
+             #aes(colour = factor(Population))
+             ) +
+  geom_abline(aes(intercept = 0, slope = 0)) +
+  labs(title = "GnRH2",
+       x = "Morphological Sex",
+       y = "Relative Whole Brain Expression (GAPDH)") +
+  theme_classic() +
+  scale_y_continuous(limits = c(-5.0,8.0),
+                     n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 18, color = "black"), # x-axis
+        axis.text.x = element_text(size = 18, color = "black"),
+        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+        axis.text.y = element_text(size = 14, color = "black"),
+        legend.position = "none") + #hide legend
+  #facet_wrap(~MorphSex) # fill = food condition
+  facet_wrap(~FoodCondition) # fill = MorphSex
 FvNF.GnRH2.p1
 
 ## Gnrh2 (EarlyB)
@@ -95,7 +104,7 @@ FvNF.GnRH2.p2 <- ggplot(data = ge , aes(x = FoodCondition,
                                         y = g2.eB.deltaCt,
                                         fill = FoodCondition)) +
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
-  scale_fill_manual(values = c("#08A47F", "#E78140")) +
+  scale_fill_manual(values = c("#08A47F", "#E78140")) + #fill = food condition
   geom_boxplot(outlier.shape = NA) +
   geom_point(position=position_jitterdodge(), size = 3,
              #aes(colour = factor(Population))
@@ -104,6 +113,33 @@ FvNF.GnRH2.p2 <- ggplot(data = ge , aes(x = FoodCondition,
        x = "Food Condition",
        y = "Relative Whole Brain GnRH2 Expression (EarlyB)") +
   theme_classic() +
+  scale_y_continuous(limits = c(0,8.0),
+                     n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 18, color = "black"), # x-axis
+        axis.text.x = element_text(size = 18, color = "black"),
+        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+        axis.text.y = element_text(size = 14, color = "black"),
+        legend.position = "none") + #hide legend
+  facet_wrap(~ MorphSex)
+FvNF.GnRH2.p2
+
+## GnrhrA (GAPDH)
+FvNF.GnRHRA.p <- ggplot(data = ge , aes(x = MorphSex,
+                                       y = RA.GAP.deltaCt,
+                                       fill = MorphSex)) +
+  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
+  # scale_fill_manual(values = c("#08A47F", "#E78140")) + #fill = food condition
+  scale_fill_manual(values = c("#392682", "#3F86BC", "#83DDE0")) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position=position_jitterdodge(), size = 3,
+             #aes(colour = factor(Population))
+             ) +
+  geom_abline(aes(intercept = 0, slope = 0)) +
+  labs(title = "GnRHR(A)",
+       x = "Morphological Sex",
+       y = "Relative Whole Brain Expression (GAPDH)") +
+  theme_classic() +
   scale_y_continuous(limits = c(-5.0,8.0),
                      n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
@@ -111,32 +147,13 @@ FvNF.GnRH2.p2 <- ggplot(data = ge , aes(x = FoodCondition,
         axis.text.x = element_text(size = 18, color = "black"),
         axis.title.y = element_text(size = 18, color = "black"), # y-axis
         axis.text.y = element_text(size = 14, color = "black"),
-        legend.position = "none") #hide legend
-FvNF.GnRH2.p2
-
-## GnrhrA
-FvNF.GnRHRA.p <- ggplot(data = ge , aes(x = FoodCondition,
-                                       y = RA.GAP.deltaCt,
-                                       fill = FoodCondition)) +
-  # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
-  scale_fill_manual(values = c("#08A47F", "#E78140")) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_point(position=position_jitterdodge(), size = 3,
-             #aes(colour = factor(Population))
-             ) +
-  labs(title = "GnRHRA Expression in Food vs No Food",
-       x = "Food Condition",
-       y = "Relative Whole Brain GnRHRA Expression (GAPDH)") +
-  theme_classic() +
-  scale_y_continuous(limits = c(-0.0,8.0),
-                     n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
-  theme(plot.title = element_text(size = 28, color = "black"),
-        axis.title.x = element_text(size = 18, color = "black"), # x-axis
-        axis.text.x = element_text(size = 18, color = "black"),
-        axis.title.y = element_text(size = 18, color = "black"), # y-axis
-        axis.text.y = element_text(size = 14, color = "black"),
-        legend.position = "none") #hide legend
+        legend.position = "none")+ #hide legend
+  #facet_wrap(~MorphSex) # fill = food condition
+  facet_wrap(~FoodCondition) # fill = MorphSex
 FvNF.GnRHRA.p
+
+# patchwork alignment
+FvNF.GnRH1.p + FvNF.GnRH2.p1 + FvNF.GnRHRA.p + plot_annotation(tag_levels = "A")
 
 ## Filter for each morph sex----
 ### females
@@ -407,8 +424,8 @@ p.g2.g1 <- ggplot(data = ge, aes(x = g2.GAP.deltaCt,
    labs(title = "GnRH Genes Expression",
         x = "Relative GnRH2 (GAPDH)",
         y = "Relative GnRH1 (GAPDH)") +
-   theme_classic()
-  #facet_wrap(~ FoodCondition)
+   theme_classic() +
+  facet_wrap(~ FoodCondition)
 p.g2.g1
 
 ## deltaCt GnRH2 and GnRHRA
