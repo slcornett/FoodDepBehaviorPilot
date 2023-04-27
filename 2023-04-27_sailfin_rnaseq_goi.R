@@ -55,6 +55,8 @@ pep.p <- ggplot(data = RNA.reads.pep , aes(x = gene_name,
   labs(x = "Gene of Interest",
        y = "Reads") +
   theme_classic() +
+  scale_y_continuous(limits = c(0,300),
+                     n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
         axis.title.x = element_text(size = 14, color = "black", face = "bold"), # x-axis
         axis.text.x = element_text(size = 14, color = "black", face = "italic"),
@@ -73,6 +75,8 @@ receptor.p <- ggplot(data = RNA.reads.receptor , aes(x = gene_name,
   labs(x = "Gene of Interest",
        y = "Reads") +
   theme_classic() +
+  scale_y_continuous(limits = c(0,15.0),
+                     n.breaks = 15) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
         axis.title.x = element_text(size = 14, color = "black", face = "bold"), # x-axis
         axis.text.x = element_text(size = 14, color = "black", face = "italic"),
