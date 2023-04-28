@@ -93,12 +93,12 @@ pIB.b <- ggplot(data = ib.d1.14, aes(x = Day,
   #scale_y_continuous(breaks=pretty(Day1.14_ib$InitiatingBehaviors_Count, n=10)) +
   labs(title = "Initiating Behaviors",
        x ="Food Deprivation Day",
-       y="Initiating Behavior Count (over 30min)") +
+       y="Initiating Behavior Count (over 20min)") +
   theme(plot.title = element_text(size = 28),
-        axis.title.x = element_text(size = 18), # x-axis
-        axis.text.x = element_text(size = 18),
-        axis.title.y = element_text(size = 18), # y-axis
-        axis.text.y = element_text(size = 18)) +
+        axis.title.x = element_text(size = 14), # x-axis
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14), # y-axis
+        axis.text.y = element_text(size = 14)) +
   facet_wrap(~ Behavior + FoodCondition)
 pIB.b
 
@@ -115,12 +115,12 @@ pRB.b <- ggplot(data = rb.d1.14, aes(x = Day,
   #scale_y_continuous(breaks=pretty(Day1.14_ib$InitiatingBehaviors_Count, n=10)) +
   labs(title = "Responding Behaviors",
        x ="Food Deprivation Day",
-       y="Responding Behavior Count (over 30min)") +
+       y="Responding Behavior Count (over 20min)") +
   theme(plot.title = element_text(size = 28),
-        axis.title.x = element_text(size = 18), # x-axis
-        axis.text.x = element_text(size = 18),
-        axis.title.y = element_text(size = 18), # y-axis
-        axis.text.y = element_text(size = 18)) +
+        axis.title.x = element_text(size = 14), # x-axis
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14), # y-axis
+        axis.text.y = element_text(size = 14)) +
   facet_wrap(~ Behavior + FoodCondition)
 pRB.b
 
