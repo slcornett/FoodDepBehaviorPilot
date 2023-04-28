@@ -47,6 +47,34 @@ ib.d1.14 <- ib.d1.14 %>%
                        # too_few = "debug",
                        # too_many = "debug"
                        )
+
+## selecting specific initiating behaviors for molly, Day 1 and 14
+initiating2 <- d2 %>% select(Fish,
+                             MorphSex,
+                             FoodCondition,
+                             Day1_Chase,
+                             Day1_TransverseApproach,
+                             Day1_SexDispCwrap,
+                             Day1_SexDispFrontShimmy,
+                             Day14_Chase,
+                             Day14_TransverseApproach,
+                             Day14_SexDispCwrap,
+                             Day14_SexDispFrontShimmy)
+## collapse behaviors into single column
+ib.d1.14_2 <- initiating2 %>%
+  pivot_longer(cols=starts_with("Day"),
+               names_to='Behavior',
+               values_to='IB_Frequency',
+               values_drop_na = FALSE)
+## separate Day#_ from the behavior
+ib.d1.14_2 <- ib.d1.14_2 %>%
+  separate_wider_delim(col = Behavior,
+                       delim = "_",
+                       names = c("Day", "Behavior")
+                       # too_few = "debug",
+                       # too_many = "debug"
+  )
+
 # organize dataset: responding behaviors ----
 ## select the responding behaviors for Day1 and Day14
 responding <- d2 %>% select(Fish,
@@ -79,8 +107,33 @@ rb.d1.14 <- rb.d1.14 %>%
                        # too_few = "debug",
                        # too_many = "debug"
   )
+
+## selecting specific responding behaviors for molly, Day 1 and 14
+responding2 <- d2 %>% select(Fish,
+                             MorphSex,
+                             FoodCondition,
+                             Day1_Stay,
+                             Day1_Dart,
+                             Day14_Stay,
+                             Day14_Dart)
+
+## responding collapse behaviors into single column
+rb.d1.14_2 <- responding2 %>%
+  pivot_longer(cols=starts_with("Day"),
+               names_to='Behavior',
+               values_to='RB_Frequency',
+               values_drop_na = FALSE)
+## responding separate Day#_ from the behavior
+rb.d1.14_2 <- rb.d1.14_2 %>%
+  separate_wider_delim(col = Behavior,
+                       delim = "_",
+                       names = c("Day", "Behavior")
+                       # too_few = "debug",
+                       # too_many = "debug"
+  )
+
 # BEHAVIOR CATEGORIES COMPARISON----
-## plot initiations: wrap by behaviors
+## plot initiations: wrap by behaviors + food condition
 pIB.b <- ggplot(data = ib.d1.14, aes(x = Day,
                                     y = IB_Frequency,
                                     color = MorphSex))+
@@ -102,7 +155,29 @@ pIB.b <- ggplot(data = ib.d1.14, aes(x = Day,
   facet_wrap(~ Behavior + FoodCondition)
 pIB.b
 
-# plot responses: behavior + food
+## plot initiations 2: wrap by behaviors + food condition
+pIB.b2 <- ggplot(data = ib.d1.14_2, aes(x = Day,
+                                        y = IB_Frequency,
+                                        color = MorphSex))+
+  scale_color_manual(values = c("#4B0055", "#1F948C", "#FDE333")) +
+  #scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color="darkgrey", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=MorphSex), position=position_jitter(0.05), size=4, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  #scale_y_continuous(breaks=pretty(Day1.14_ib$InitiatingBehaviors_Count, n=10)) +
+  labs(title = "Initiating Behaviors",
+       x ="Food Deprivation Day",
+       y="Initiating Behavior Count (over 20min)") +
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 14, color = "black"), # x-axis
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.title.y = element_text(size = 14, color = "black"), # y-axis
+        axis.text.y = element_text(size = 14, color = "black")) +
+  facet_wrap(ncol = 4, ~ Behavior + FoodCondition)
+pIB.b2
+
+## plot responses: behavior + food
 pRB.b <- ggplot(data = rb.d1.14, aes(x = Day,
                                      y = RB_Frequency,
                                      color = MorphSex))+
@@ -116,11 +191,32 @@ pRB.b <- ggplot(data = rb.d1.14, aes(x = Day,
   labs(title = "Responding Behaviors",
        x ="Food Deprivation Day",
        y="Responding Behavior Count (over 20min)") +
-  theme(plot.title = element_text(size = 28),
-        axis.title.x = element_text(size = 14), # x-axis
-        axis.text.x = element_text(size = 14),
-        axis.title.y = element_text(size = 14), # y-axis
-        axis.text.y = element_text(size = 14)) +
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 14, color = "black"), # x-axis
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.title.y = element_text(size = 14, color = "black"), # y-axis
+        axis.text.y = element_text(size = 14, color = "black")) +
   facet_wrap(~ Behavior + FoodCondition)
 pRB.b
 
+## plot responses 2: behavior + food
+pRB.b2 <- ggplot(data = rb.d1.14_2, aes(x = Day,
+                                        y = RB_Frequency,
+                                        color = MorphSex))+
+  scale_color_manual(values = c("#4B0055", "#1F948C", "#FDE333")) +
+  #scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color="darkgrey", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=MorphSex), position=position_jitter(0.05), size=4, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  #scale_y_continuous(breaks=pretty(Day1.14_ib$InitiatingBehaviors_Count, n=10)) +
+  labs(title = "Responding Behaviors",
+       x ="Food Deprivation Day",
+       y="Responding Behavior Count (over 20min)") +
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 14, color = "black"), # x-axis
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.title.y = element_text(size = 14, color = "black"), # y-axis
+        axis.text.y = element_text(size = 14, color = "black")) +
+  facet_wrap(~ Behavior + FoodCondition)
+pRB.b2
