@@ -414,17 +414,23 @@ GAP.eB
 #   theme_classic()
 # p1.g2.RA
 
-## deltaCt GnRH1 and GnRH2
+## deltaCt GnRH1 and GnRH2----
 p.g2.g1 <- ggplot(data = ge, aes(x = g2.GAP.deltaCt,
                                  y = g1.GAP.deltaCt,
                                  color = MorphSex #FoodCondition #
-                                 )) +
-   geom_point(position = "identity", size = 3) +
-   geom_smooth(method = "lm", se = FALSE) +
-   labs(title = "GnRH Genes Expression",
+                                 ))+
+  scale_color_manual(values = c("#4B0055", "#1F948C", "#FDE333")) +
+  geom_point(position = "identity", size = 4, alpha = 0.8) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "GnRH Genes Expression",
         x = "Relative GnRH2 (GAPDH)",
         y = "Relative GnRH1 (GAPDH)") +
-   theme_classic() +
+  theme_classic() +
+  theme(plot.title = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 14, color = "black"), # x-axis
+        axis.text.x = element_text(size = 12, color = "black"),
+        axis.title.y = element_text(size = 14, color = "black"), # y-axis
+        axis.text.y = element_text(size = 12, color = "black")) +
   facet_wrap(~ FoodCondition)
 p.g2.g1
 
