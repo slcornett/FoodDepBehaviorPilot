@@ -236,16 +236,18 @@ pIB.b3 <- ggplot(data = ib.d1.14_3, aes(x = Day,
   #scale_color_startrek(alpha = 0.75) + # so can see overlapping points
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color="darkgrey", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=MorphSex), position=position_jitter(0.08), size=4, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=MorphSex), position=position_jitter(0.09), size=5, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
+  scale_y_continuous(limits = c(-1,100),
+                     n.breaks = 5) +
   labs(title = "Initiating Behaviors",
        x ="Food Deprivation Day",
        y="Initiating Behavior Count (over 20min)") +
-  theme(plot.title = element_text(size = 28, color = "black"),
-        axis.title.x = element_text(size = 14, color = "black"), # x-axis
-        axis.text.x = element_text(size = 14, color = "black"),
-        axis.title.y = element_text(size = 14, color = "black"), # y-axis
-        axis.text.y = element_text(size = 14, color = "black")) +
+  theme(plot.title = element_text(size = 20, color = "black"),
+        axis.title.x = element_text(size = 14, color = "black", face = "bold"), # x-axis
+        axis.text.x = element_text(size = 12, color = "black"),
+        axis.title.y = element_text(size = 14, color = "black", face = "bold"), # y-axis
+        axis.text.y = element_text(size = 12, color = "black")) +
   facet_wrap( ~ Behavior + FoodCondition) #ncol = 4,
 pIB.b3
 
@@ -301,15 +303,17 @@ pRB.b3 <- ggplot(data = rb.d1.14_3, aes(x = Day,
   #scale_color_startrek(alpha = 0.75) + # so can see overlapping points
   # use the group aesthetic to map a different line for each subject.
   geom_line(aes(group=Fish), color="darkgrey", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=MorphSex), position=position_jitter(0.08), size=4, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_point(aes(color=MorphSex), position=position_jitter(0.09), size=5, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
+  # scale_y_continuous(limits = c(-1,175),
+  #                     n.breaks = 5) +
   labs(title = "Responding Behaviors",
        x ="Food Deprivation Day",
        y="Responding Behavior Count (over 20min)") +
-  theme(plot.title = element_text(size = 28, color = "black"),
-        axis.title.x = element_text(size = 14, color = "black"), # x-axis
-        axis.text.x = element_text(size = 14, color = "black"),
-        axis.title.y = element_text(size = 14, color = "black"), # y-axis
-        axis.text.y = element_text(size = 14, color = "black")) +
+  theme(plot.title = element_text(size = 20, color = "black"),
+        axis.title.x = element_text(size = 14, color = "black", face = "bold"), # x-axis
+        axis.text.x = element_text(size = 12, color = "black"),
+        axis.title.y = element_text(size = 14, color = "black", face = "bold"), # y-axis
+        axis.text.y = element_text(size = 12, color = "black")) +
   facet_wrap(~ Behavior + FoodCondition)
 pRB.b3
