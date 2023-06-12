@@ -205,6 +205,27 @@ pIB.b <- ggplot(data = ib.d1.14, aes(x = Day,
         axis.text.y = element_text(size = 14)) +
   facet_wrap(~ Behavior + FoodCondition)
 pIB.b
+## plot initiations: wrap by morphsex + food condition
+pIB.b1 <- ggplot(data = ib.d1.14, aes(x = Day,
+                                      y = IB_Frequency,
+                                      color = FoodCondition))+
+  scale_color_manual(values = c("#4B0055", "#1F948C", "#FDE333")) +
+  #scale_color_startrek(alpha = 0.75) + # so can see overlapping points
+  # use the group aesthetic to map a different line for each subject.
+  geom_line(aes(group=Fish), color="darkgrey", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=FoodCondition), position=position_jitter(0.05), size=4, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
+  theme_classic() +
+  #scale_y_continuous(breaks=pretty(Day1.14_ib$InitiatingBehaviors_Count, n=10)) +
+  labs(title = "Initiating Behaviors",
+       x ="Food Deprivation Day",
+       y="Initiating Behavior Count (over 20min)") +
+  theme(plot.title = element_text(size = 28),
+        axis.title.x = element_text(size = 14), # x-axis
+        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14), # y-axis
+        axis.text.y = element_text(size = 14)) +
+  facet_wrap(~ MorphSex + FoodCondition, nrow = 3)
+pIB.b1
 
 ## plot initiations 2: wrap by behaviors + food condition
 pIB.b2 <- ggplot(data = ib.d1.14_2, aes(x = Day,
