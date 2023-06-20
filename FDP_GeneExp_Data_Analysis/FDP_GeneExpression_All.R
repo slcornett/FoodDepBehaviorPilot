@@ -4,6 +4,7 @@ library(tidyverse)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(hrbrthemes)
 #library(ggsci) # science theme for ggplot2
 library(cowplot)
 library(patchwork) # combining plots
@@ -44,14 +45,65 @@ ge <- ge %>% mutate(g2.eB.deltaCt = (GnRH2_CtAvg - EarlyB_CtAvg), # same plate c
 # ge <- ge %>% mutate(g2.deltaCt = GnRH2_CtAvg - Control_AvgCt, # gnrh2
 #                     RA.deltaCt = GnRHRA_CtAvg - Control_AvgCt) # gnrhRA
 print(ge)
-# Food v NoFood Comparisons----
+# Food v NoFood Regressions----
+## gnrh1
+hist(ge$g1.GAP.deltaCt)
+FvNF.gnrh1.aov <- aov(data = ge, g1.GAP.deltaCt ~ FoodCondition)
+summary(FvNF.gnrh1.aov)
+
+FvNF.gnrh1.lm1 <- lm(data = ge, g1.GAP.deltaCt ~ FoodCondition)
+summary(FvNF.gnrh1.lm1)
+
+FvNF.gnrh1.lm2 <- lm(data = ge, g1.GAP.deltaCt ~ MorphSex)
+summary(FvNF.gnrh1.lm2)
+
+FvNF.gnrh1.lm3 <- lm(data = ge, g1.GAP.deltaCt ~ MorphSex+FoodCondition)
+summary(FvNF.gnrh1.lm3)
+
+FvNF.gnrh1.lm4 <- lm(data = ge, g1.GAP.deltaCt ~ MorphSex:FoodCondition)
+summary(FvNF.gnrh1.lm4)
+
+FvNF.gnrh1.lm5 <- lm(data = ge, g1.GAP.deltaCt+SL_mm ~ MorphSex:FoodCondition) ## everything is significant! WTF does this mean????
+summary(FvNF.gnrh1.lm5)
+
+## GnRH2
+hist(ge$g2.GAP.deltaCt)
+FvNF.gnrh2.aov <- aov(data = ge, g2.GAP.deltaCt ~ FoodCondition)
+summary(FvNF.gnrh2.aov)
+
+FvNF.gnrh2.lm1 <- lm(data = ge, g2.GAP.deltaCt ~ FoodCondition)
+summary(FvNF.gnrh2.lm1)
+
+FvNF.gnrh2.lm2 <- lm(data = ge, g2.GAP.deltaCt ~ MorphSex)
+summary(FvNF.gnrh2.lm2)
+
+FvNF.gnrh2.lm3 <- lm(data = ge, g2.GAP.deltaCt ~ MorphSex+FoodCondition)
+summary(FvNF.gnrh2.lm3)
+
+FvNF.gnrh2.lm4 <- lm(data = ge, g2.GAP.deltaCt ~ MorphSex:FoodCondition)
+summary(FvNF.gnrh2.lm4)
+
+FvNF.gnrh2.lm5 <- lm(data = ge, g2.GAP.deltaCt+SL_mm ~ MorphSex:FoodCondition) ## everything is significant! WTF does this mean????
+summary(FvNF.gnrh2.lm5)
+
+## gnrh1 v gnrh2
+FvNF.gnrh2_gnrh1.lm1 <- lm(data = ge, g2.GAP.deltaCt ~ g1.GAP.deltaCt + FoodCondition)
+summary(FvNF.gnrh2_gnrh1.lm1)
+
+FvNF.gnrh2_gnrh1.lm <- lm(data = ge, g2.GAP.deltaCt ~ g1.GAP.deltaCt + FoodCondition:MorphSex)
+summary(FvNF.gnrh2_gnrh1.lm)
+plot(FvNF.gnrh2_gnrh1.lm)
+
+# Food v NoFood Comparisons Graphs----
 ## Gapdh (housekeeping)
 FvNF.gapdh.p <- ggplot(data = ge , aes(x = MorphSex,
                                        y = GAPDH_CtAvg,
                                        fill = MorphSex)) +
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
   # scale_fill_manual(values = c("#08A47F", "#E78140")) + #fill = food condition
-  scale_fill_manual(values = c("#392682", "#3F86BC", "#83DDE0")) +
+  scale_fill_manual(values = c("#4B0055", #f
+                               "#1F948C", #om
+                               "#FDE333")) + #sm
   geom_boxplot(outlier.shape = NA) +
   geom_point(position=position_jitterdodge(), size = 3) +
   labs(title = "GAPDH",
@@ -61,11 +113,11 @@ FvNF.gapdh.p <- ggplot(data = ge , aes(x = MorphSex,
   scale_y_continuous(limits = c(0.0,27.0),
                       n.breaks = 14) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
-        axis.title.x = element_text(size = 12, color = "black", face = "bold"), # x-axis
-        axis.text.x = element_text(size = 12, color = "black"),
-        axis.title.y = element_text(size = 12, color = "black", face = "bold"), # y-axis
-        axis.text.y = element_text(size = 12, color = "black"),
-        legend.position = "none") + #hide legend)
+        axis.title.x = element_text(size = 18, color = "black", face = "bold"), # x-axis
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.title.y = element_text(size = 18, color = "black", face = "bold"), # y-axis
+        axis.text.y = element_text(size = 14, color = "black"),
+        legend.position = "none")+ #hide legend
   #facet_wrap(~MorphSex) # fill = food condition
   facet_wrap(~FoodCondition) # fill = MorphSex
 FvNF.gapdh.p
@@ -76,22 +128,24 @@ FvNF.GnRH1.p <- ggplot(data = ge , aes(x = MorphSex,
                                        fill = MorphSex)) +
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
   # scale_fill_manual(values = c("#08A47F", "#E78140")) + #fill = food condition
-  scale_fill_manual(values = c("#392682", "#3F86BC", "#83DDE0")) +
+  scale_fill_manual(values = c("#4B0055", #f
+                               "#1F948C", #om
+                               "#FDE333")) + #sm
   geom_boxplot(outlier.shape = NA) +
   geom_point(position=position_jitterdodge(), size = 3) +
-  geom_abline(aes(intercept = 0, slope = 0)) +
+  geom_abline(aes(intercept = 0, slope = 0, color = "red")) +
   labs(title = "GnRH1",
        x = "Morphological Sex",
        y = "Relative Whole Brain Expression (GAPDH)") +
   theme_classic() +
   scale_y_continuous(limits = c(-5.0,8.0),
                      n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
-  theme(plot.title = element_text(size = 28, color = "black"),
-        axis.title.x = element_text(size = 18, color = "black"), # x-axis
-        axis.text.x = element_text(size = 18, color = "black"),
-        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+  theme(plot.title = element_text(size = 24, color = "black"),
+        axis.title.x = element_text(size = 16, color = "black", face = "bold"), # x-axis
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.title.y = element_text(size = 16, color = "black", face = "bold"), # y-axis
         axis.text.y = element_text(size = 14, color = "black"),
-        legend.position = "none") + #hide legend)
+        legend.position = "none")+ #hide legend
   #facet_wrap(~MorphSex) # fill = food condition
   facet_wrap(~FoodCondition) # fill = MorphSex
 FvNF.GnRH1.p
@@ -102,24 +156,26 @@ FvNF.GnRH2.p1 <- ggplot(data = ge , aes(x = MorphSex,
                                        fill = MorphSex)) +
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
   # scale_fill_manual(values = c("#08A47F", "#E78140")) + #fill = food condition
-  scale_fill_manual(values = c("#392682", "#3F86BC", "#83DDE0")) +
+  scale_fill_manual(values = c("#4B0055", #f
+                               "#1F948C", #om
+                               "#FDE333")) + #sm
   geom_boxplot(outlier.shape = NA) +
   geom_point(position=position_jitterdodge(), size = 3,
              #aes(colour = factor(Population))
              ) +
-  geom_abline(aes(intercept = 0, slope = 0)) +
+  geom_abline(aes(intercept = 0, slope = 0, color = "red")) +
   labs(title = "GnRH2",
        x = "Morphological Sex",
        y = "Relative Whole Brain Expression (GAPDH)") +
   theme_classic() +
   scale_y_continuous(limits = c(-5.0,8.0),
                      n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
-  theme(plot.title = element_text(size = 28, color = "black"),
-        axis.title.x = element_text(size = 18, color = "black"), # x-axis
-        axis.text.x = element_text(size = 18, color = "black"),
-        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+  theme(plot.title = element_text(size = 24, color = "black"),
+        axis.title.x = element_text(size = 16, color = "black", face = "bold"), # x-axis
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.title.y = element_text(size = 16, color = "black", face = "bold"), # y-axis
         axis.text.y = element_text(size = 14, color = "black"),
-        legend.position = "none") + #hide legend
+        legend.position = "none")+ #hide legend
   #facet_wrap(~MorphSex) # fill = food condition
   facet_wrap(~FoodCondition) # fill = MorphSex
 FvNF.GnRH2.p1
@@ -141,11 +197,11 @@ FvNF.GnRH2.p2 <- ggplot(data = ge , aes(x = FoodCondition,
   scale_y_continuous(limits = c(0,8.0),
                      n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
   theme(plot.title = element_text(size = 28, color = "black"),
-        axis.title.x = element_text(size = 18, color = "black"), # x-axis
-        axis.text.x = element_text(size = 18, color = "black"),
-        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+        axis.title.x = element_text(size = 18, color = "black", face = "bold"), # x-axis
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.title.y = element_text(size = 18, color = "black", face = "bold"), # y-axis
         axis.text.y = element_text(size = 14, color = "black"),
-        legend.position = "none") + #hide legend
+        legend.position = "none")+ #hide legend
   facet_wrap(~ MorphSex)
 FvNF.GnRH2.p2
 
@@ -155,22 +211,24 @@ FvNF.GnRHRA.p <- ggplot(data = ge , aes(x = MorphSex,
                                        fill = MorphSex)) +
   # food : green from sg_GrnYl (#08A47F) # No food: orange from plasma (#E78140)
   # scale_fill_manual(values = c("#08A47F", "#E78140")) + #fill = food condition
-  scale_fill_manual(values = c("#392682", "#3F86BC", "#83DDE0")) +
+  scale_fill_manual(values = c("#4B0055", #f
+                               "#1F948C", #om
+                               "#FDE333")) + #sm
   geom_boxplot(outlier.shape = NA) +
   geom_point(position=position_jitterdodge(), size = 3,
              #aes(colour = factor(Population))
              ) +
-  geom_abline(aes(intercept = 0, slope = 0)) +
+  geom_abline(aes(intercept = 0, slope = 0, color = "red")) +
   labs(title = "GnRHR(A)",
        x = "Morphological Sex",
        y = "Relative Whole Brain Expression (GAPDH)") +
   theme_classic() +
   scale_y_continuous(limits = c(-5.0,8.0),
                      n.breaks = 12) + # breaks=pretty(sex.f$deltaCt, n=15)
-  theme(plot.title = element_text(size = 28, color = "black"),
-        axis.title.x = element_text(size = 18, color = "black"), # x-axis
-        axis.text.x = element_text(size = 18, color = "black"),
-        axis.title.y = element_text(size = 18, color = "black"), # y-axis
+  theme(plot.title = element_text(size = 24, color = "black"),
+        axis.title.x = element_text(size = 16, color = "black", face = "bold"), # x-axis
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.title.y = element_text(size = 16, color = "black", face = "bold"), # y-axis
         axis.text.y = element_text(size = 14, color = "black"),
         legend.position = "none")+ #hide legend
   #facet_wrap(~MorphSex) # fill = food condition
