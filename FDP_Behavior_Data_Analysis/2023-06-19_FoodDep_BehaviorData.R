@@ -188,11 +188,13 @@ rb.d1.14_3 <- rb.d1.14_3 %>%
 pIB.b <- ggplot(data = ib.d1.14, aes(x = Day,
                                     y = IB_Frequency,
                                     color = MorphSex))+
-  scale_color_manual(values = c("#4B0055", "#1F948C", "#FDE333")) +
+  scale_color_manual(values = c("#4B0055",
+                                "#1F948C",
+                                "#FDE333")) +
   #scale_color_startrek(alpha = 0.75) + # so can see overlapping points
   # use the group aesthetic to map a different line for each subject.
-  geom_line(aes(group=Fish), color="darkgrey", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=MorphSex), position=position_jitter(0.05), size=4, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
+  geom_line(aes(group=Fish), color="black", linewidth=2) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color=MorphSex), position=position_jitter(0.05), size=6, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   #scale_y_continuous(breaks=pretty(Day1.14_ib$InitiatingBehaviors_Count, n=10)) +
   labs(title = "Initiating Behaviors",
@@ -249,15 +251,14 @@ pIB.b2 <- ggplot(data = ib.d1.14_2, aes(x = Day,
   facet_wrap(ncol = 4, ~ Behavior + FoodCondition)
 pIB.b2
 
-## plot initiations 3: wrap by behaviors + food condition
+## plot initiations 3: wrap by behaviors + food condition ## used on SBN poster, quals
 pIB.b3 <- ggplot(data = ib.d1.14_3, aes(x = Day,
                                         y = IB_Frequency,
                                         color = MorphSex))+
-  scale_color_manual(values = c("#4B0055", "#1F948C")) +
-  #scale_color_startrek(alpha = 0.75) + # so can see overlapping points
-  # use the group aesthetic to map a different line for each subject.
-  geom_line(aes(group=Fish), color="darkgrey", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=MorphSex), position=position_jitter(0.09), size=5, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
+  scale_color_manual(values = c("#4B0055",
+                                "#1F948C")) +
+  geom_line(aes(group = Fish), linewidth=1.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color = MorphSex), position=position_jitter(0.09), size=8, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
   scale_y_continuous(limits = c(-1,100),
                      n.breaks = 5) +
@@ -265,10 +266,10 @@ pIB.b3 <- ggplot(data = ib.d1.14_3, aes(x = Day,
        x ="Food Deprivation Day",
        y="Initiating Behavior Count (over 20min)") +
   theme(plot.title = element_text(size = 20, color = "black"),
-        axis.title.x = element_text(size = 14, color = "black", face = "bold"), # x-axis
-        axis.text.x = element_text(size = 12, color = "black"),
-        axis.title.y = element_text(size = 14, color = "black", face = "bold"), # y-axis
-        axis.text.y = element_text(size = 12, color = "black")) +
+        axis.title.x = element_text(size = 24, color = "black"), # x-axis
+        axis.text.x = element_text(size = 20, color = "black", face = "bold"),
+        axis.title.y = element_text(size = 24, color = "black", face = "bold"), # y-axis
+        axis.text.y = element_text(size = 20, color = "black", face = "bold")) +
   facet_wrap( ~ Behavior + FoodCondition) #ncol = 4,
 pIB.b3
 
@@ -316,25 +317,22 @@ pRB.b2 <- ggplot(data = rb.d1.14_2, aes(x = Day,
   facet_wrap(~ Behavior + FoodCondition)
 pRB.b2
 
-## plot responses 2: behavior + food
+## plot responses 2: behavior + food ## used on SBN poster, quals
 pRB.b3 <- ggplot(data = rb.d1.14_3, aes(x = Day,
                                         y = RB_Frequency,
                                         color = MorphSex))+
-  scale_color_manual(values = c("#4B0055", "#1F948C")) +
-  #scale_color_startrek(alpha = 0.75) + # so can see overlapping points
-  # use the group aesthetic to map a different line for each subject.
-  geom_line(aes(group=Fish), color="darkgrey", linewidth=0.5) + # group = {Subject}, the individual linking the two data points
-  geom_point(aes(color=MorphSex), position=position_jitter(0.09), size=5, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
+  scale_color_manual(values = c("#4B0055",
+                                "#1F948C")) +
+  geom_line(aes(group = Fish), linewidth = 1.5) + # group = {Subject}, the individual linking the two data points
+  geom_point(aes(color = MorphSex), position=position_jitter(0.09), size=8, alpha=0.75) + #, position=position_jitter(0.1) # off-sets the data points
   theme_classic() +
-  # scale_y_continuous(limits = c(-1,175),
-  #                     n.breaks = 5) +
   labs(title = "Responding Behaviors",
        x ="Food Deprivation Day",
        y="Responding Behavior Count (over 20min)") +
   theme(plot.title = element_text(size = 20, color = "black"),
-        axis.title.x = element_text(size = 14, color = "black", face = "bold"), # x-axis
-        axis.text.x = element_text(size = 12, color = "black"),
-        axis.title.y = element_text(size = 14, color = "black", face = "bold"), # y-axis
-        axis.text.y = element_text(size = 12, color = "black")) +
+        axis.title.x = element_text(size = 24, color = "black"), # x-axis
+        axis.text.x = element_text(size = 20, color = "black", face = "bold"),
+        axis.title.y = element_text(size = 24, color = "black", face = "bold"), # y-axis
+        axis.text.y = element_text(size = 20, color = "black", face = "bold")) +
   facet_wrap(~ Behavior + FoodCondition)
 pRB.b3
